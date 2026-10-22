@@ -17,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Scene 4.unity
     guid: 2446d900c2c9ea94d82d31db8061934a
+  - enabled: 1
+    path: Assets/Scenes/MiniSmash.unity
+    guid: ceeeb2bda013f7c40a00cd01fb5c849f
+  - enabled: 1
+    path: Assets/Scenes/MiniSpray.unity
+    guid: 9cb98dc5e2234a045b0d29ba3b63314a
   m_configObjects: {}

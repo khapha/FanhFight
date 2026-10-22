@@ -14,7 +14,7 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
-        // thêm nút "Huong dan" bằng cách nhân bản nút Quit, đẩy Quit xuống dưới
+        // menu chọn game: nhân bản nút Quit thành các nút mới, xếp thành cột dưới nút Play
         Button quit = null;
         foreach (Button b in GetComponentsInChildren<Button>(true))
         {
@@ -23,16 +23,15 @@ public class MainMenu : MonoBehaviour
         }
         if (quit != null)
         {
-            helpButton = Instantiate(quit, quit.transform.parent);
-            helpButton.name = "HowToPlay";
-            helpButton.onClick = new Button.ButtonClickedEvent();
-            helpButton.onClick.AddListener(HowToPlay);
-            helpButton.GetComponentInChildren<TMP_Text>().text = "Huong dan";
-            RectTransform q = (RectTransform)quit.transform;
             RectTransform p = (RectTransform)playButton.transform;
-            float step = p.anchoredPosition.y - q.anchoredPosition.y;
-            ((RectTransform)helpButton.transform).anchoredPosition = q.anchoredPosition;
-            q.anchoredPosition -= new Vector2(0, step);
+            float step = p.anchoredPosition.y - ((RectTransform)quit.transform).anchoredPosition.y;
+            playButton.GetComponentInChildren<TMP_Text>().text = "Phieu luu";
+            Button smash = CloneButton(quit, "Dap dep", () => SceneManager.LoadScene("MiniSmash"));
+            Button spray = CloneButton(quit, "Khu vuon hoa", () => SceneManager.LoadScene("MiniSpray"));
+            helpButton = CloneButton(quit, "Huong dan", HowToPlay);
+            Button[] order = { playButton, smash, spray, helpButton, quit };
+            for (int i = 0; i < order.Length; i++)
+                ((RectTransform)order[i].transform).anchoredPosition = p.anchoredPosition - new Vector2(0, step * i);
         }
         // tiêu đề sáng, có viền cho nổi trên nền rừng
         foreach (TMP_Text t in GetComponentInParent<Canvas>().GetComponentsInChildren<TMP_Text>(true))
@@ -53,6 +52,16 @@ public class MainMenu : MonoBehaviour
             Camera.main.transform.position += new Vector3(Time.deltaTime * 1.5f, 0, 0);
         if (helpPanel != null && helpPanel.activeSelf && GameInput.Pause.WasPressedThisFrame())
             CloseHelp();
+    }
+
+    Button CloneButton(Button source, string label, UnityEngine.Events.UnityAction onClick)
+    {
+        Button b = Instantiate(source, source.transform.parent);
+        b.name = label;
+        b.onClick = new Button.ButtonClickedEvent();
+        b.onClick.AddListener(onClick);
+        b.GetComponentInChildren<TMP_Text>().text = label;
+        return b;
     }
 
     public void PlayGame()

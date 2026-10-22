@@ -38,7 +38,10 @@ public class Door : MonoBehaviour
         gm.SaveHighscore();
         // sang màn kế tiếp trong Build Settings, hết màn thì thắng
         int next = SceneManager.GetActiveScene().buildIndex + 1;
-        if (next < SceneManager.sceneCountInBuildSettings)
+        // chỉ sang màn kế nếu đó là màn phiêu lưu (sau màn cuối là các mini-game)
+        string nextName = next < SceneManager.sceneCountInBuildSettings
+            ? System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(next)) : "";
+        if (GameHUD.LevelNumber(nextName) > 0)
             SceneManager.LoadScene(next);
         else
             GameOverUI.Show("YOU WIN!", gm.points, gm.highscore);
