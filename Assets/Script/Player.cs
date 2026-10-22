@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,12 +15,18 @@ public class Player : MonoBehaviour
     public Animator anim;
     public GameMaster gm;
     public SoundManager sound;
+    public float h = 0;
+    public bool jump = false;
+    private float baseSpeed, baseMaxspeed;
+    private bool dead = false;
 
     // Start is called before the first frame update
     void Start()
     {
         r2 = gameObject.GetComponent<Rigidbody2D>();   
         anim = gameObject.GetComponent<Animator>();
+        baseSpeed = speed;
+        baseMaxspeed = maxspeed;
         ourHealth = maxhealth;
         sound = GameObject.FindGameObjectWithTag("Sounds").GetComponent<SoundManager>();
         gm = GameObject.FindGameObjectWithTag("gamemaster").GetComponent<GameMaster>();
@@ -33,7 +37,7 @@ public class Player : MonoBehaviour
     {
         anim.SetBool("Grounded", grounded);
         anim.SetFloat("Speed", Mathf.Abs(r2.velocity.x));
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || jump == true)
         {
             if (grounded)
             {
@@ -46,8 +50,7 @@ public class Player : MonoBehaviour
                 if (doublejump)
                 {
                     doublejump = false;
-                    r2.velocity = new Vector2(r2.velocity.x, 0);
-                    r2.AddForce(Vector2.up * jumpPow);
+                    Invoke("Djump", 0.5f);
                 }
             }
                 
@@ -55,10 +58,14 @@ public class Player : MonoBehaviour
     }
     void FixedUpdate()
     {
-
-        float h = Input.GetAxis("Horizontal");
+        Move(h);
         r2.AddForce((Vector2.right) * speed * h);
-        
+
+        float hkey = Input.GetAxis("Horizontal");
+        r2.AddForce((Vector2.right) * speed * hkey);
+
+
+
         //giới hạn tốc độ
         if (r2.velocity.x > maxspeed)
             r2.velocity = new Vector2(maxspeed, r2.velocity.y);
@@ -72,11 +79,11 @@ public class Player : MonoBehaviour
         if(r2.velocity.y < -maxjump)
             r2.velocity = new Vector2(r2.velocity.x, -maxjump);
 
-        if (h >0 && !facerright)
+        if ((h >0 && !facerright) || (hkey > 0 && !facerright))
         {
             Flip();
         }
-        if (h < 0 && facerright)
+        if ((h < 0 && facerright) || (hkey < 0 && facerright))
         {
             Flip();
         }
@@ -90,6 +97,26 @@ public class Player : MonoBehaviour
         }
 
     }
+    public void Djump()
+    {
+        doublejump = false;
+        r2.velocity = new Vector2(r2.velocity.x, 0);
+        r2.AddForce(Vector2.up * jumpPow);
+    }
+    public void Jumping (bool Bjump)
+    {
+        jump = Bjump;
+    }
+    public void Move (float Binput)
+    {
+        h = Binput;
+    }
+
+    public void Jump()
+    {
+        doublejump = false;
+
+    }
     public void Flip()
     {
         facerright = !facerright;
@@ -100,22 +127,28 @@ public class Player : MonoBehaviour
     }
     public void Death()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (dead) return;
+        dead = true;
         if(PlayerPrefs.GetInt("highscore") < gm.points)
         {
             PlayerPrefs.SetInt("highscore", gm.points);
         }
-       
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
+
+
     public void Damage(int damage)
     {
         ourHealth -= damage;
         gameObject.GetComponent<Animation>().Play("RedFlash");
     }
-    public void KnockBack (float Knockpow, Vector2 Knockdir)
+    public void KnockBack (float Knockpow, Vector2 sourcePos)
     {
+        // đẩy lùi ra xa nguồn gây sát thương
+        float dir = transform.position.x >= sourcePos.x ? 1f : -1f;
         r2.velocity = new Vector2(0, 0);
-        r2.AddForce(new Vector2(Knockdir.x - 100, Knockdir.y * Knockpow));
+        r2.AddForce(new Vector2(dir * 100f, Knockpow));
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -130,7 +163,7 @@ public class Player : MonoBehaviour
         if (collision.CompareTag("heart"))
         {
             Destroy(collision.gameObject);
-            ourHealth = 5;
+            ourHealth = maxhealth;
         }
         if (collision.CompareTag("shoes"))
         {
@@ -144,8 +177,8 @@ public class Player : MonoBehaviour
     IEnumerator timecount (float time)
     {
         yield return new WaitForSeconds(time);
-        maxspeed = 3;
-        speed = 50f;
+        maxspeed = baseMaxspeed;
+        speed = baseSpeed;
         yield return 0;
             
     }

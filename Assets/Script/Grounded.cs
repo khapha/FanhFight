@@ -10,7 +10,6 @@ public class Grounded : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mov = GameObject.FindGameObjectWithTag("Movingplat").GetComponent<MovingPlat>();
         player = gameObject.GetComponentInParent<Player>();
     }
     void OnTriggerEnter2D(Collider2D collison)
@@ -24,6 +23,8 @@ public class Grounded : MonoBehaviour
             player.grounded = true;
         if (collison.isTrigger == false && collison.CompareTag("Movingplat"))
         {
+            mov = collison.GetComponent<MovingPlat>();
+            if (mov == null) return;
             movp = player.transform.position;
             movp.x += mov.speed * 1.3f;
             player.transform.position = movp;

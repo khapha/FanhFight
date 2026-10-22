@@ -18,7 +18,7 @@ public class Spikes : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             player.Damage(damage);
-            player.KnockBack(400f, player.transform.position);
+            player.KnockBack(400f, transform.position);
         }
     }
 }

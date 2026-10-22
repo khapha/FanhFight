@@ -37,10 +37,6 @@ public class TurretAI : MonoBehaviour
     public void Flip()
     {
         enemyfaceright = !enemyfaceright;
-        Vector2 Scale;
-        Scale = bullet.transform.localScale;
-        Scale.x *= -1;
-        bullet.transform.localScale = Scale;
     }
     // Update is called once per frame
     private void FixedUpdate()
@@ -71,7 +67,7 @@ public class TurretAI : MonoBehaviour
         {
             lookingRight = false;
         }
-        if (curlHealth < 0)
+        if (curlHealth <= 0)
         {
             sound.Playsound("destroy");
             Destroy(gameObject);
@@ -101,6 +97,12 @@ public class TurretAI : MonoBehaviour
             {
                 GameObject bulletclone;
                 bulletclone = Instantiate(bullet, shootpointR.transform.position, shootpointR.transform.rotation) as GameObject;
+                if (!enemyfaceright)
+                {
+                    Vector3 s = bulletclone.transform.localScale;
+                    s.x *= -1;
+                    bulletclone.transform.localScale = s;
+                }
                 bulletclone.GetComponent<Rigidbody2D>().velocity = direction * bulletspeed;
                 bullettimer = 0;
             }
@@ -108,6 +110,12 @@ public class TurretAI : MonoBehaviour
             {
                 GameObject bulletclone;
                 bulletclone = Instantiate(bullet, shootpointL.transform.position, shootpointL.transform.rotation) as GameObject;
+                if (!enemyfaceright)
+                {
+                    Vector3 s = bulletclone.transform.localScale;
+                    s.x *= -1;
+                    bulletclone.transform.localScale = s;
+                }
                 bulletclone.GetComponent<Rigidbody2D>().velocity = direction * bulletspeed;
                 bullettimer = 0;
             }

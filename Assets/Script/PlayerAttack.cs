@@ -6,6 +6,7 @@ public class PlayerAttack : MonoBehaviour
 {
     public float acttackdelay = 0.3f;
     public bool attacking = false;
+    public bool battack = false;
     public SoundManager sound;
     public Animator anim;
 
@@ -27,7 +28,7 @@ public class PlayerAttack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space) && !attacking)
+        if((Input.GetKeyDown(KeyCode.Space) && !attacking) || (battack == true && !attacking))
         {
             attacking = true;
             trigger.enabled = true;
@@ -48,5 +49,9 @@ public class PlayerAttack : MonoBehaviour
             }
         }
         anim.SetBool("Attacking", attacking);
+    }
+    public void PlayerActtack(bool attack)
+    {
+        battack = attack;
     }
 }
