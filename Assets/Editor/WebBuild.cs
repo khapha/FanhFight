@@ -37,10 +37,10 @@ public static class WebBuild
       #unity-container.unity-desktop, #unity-container.unity-mobile {
         position: absolute; top: 0; left: 0; transform: none; width: 100%; height: 100%;
       }
-      #unity-fullscreen-container { width: 100%; height: calc(100% - 38px); }
+      #unity-fullscreen-container { width: 100% !important; height: calc(100% - 38px) !important; }
       #unity-canvas { display: block; width: 100% !important; height: 100% !important; }
       #unity-footer { width: 100%; height: 38px; background: #fff; }
-      .unity-mobile #unity-fullscreen-container, #unity-fullscreen-container:fullscreen { height: 100%; }
+      .unity-mobile #unity-fullscreen-container, #unity-fullscreen-container:fullscreen { height: 100% !important; }
     </style>
   </head>");
         File.WriteAllText(page, html);
