@@ -7,6 +7,7 @@ public class AttackTrigger : MonoBehaviour
     public int dmg = 20;
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!GameSession.IsPlaying) return;
         if(collision.isTrigger != true && collision.CompareTag("Enemy"))
         {
             collision.SendMessageUpwards("Damage", dmg);

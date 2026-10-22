@@ -6,7 +6,6 @@ using TMPro;
 // Hiện tên màn khi bắt đầu, cho người chơi biết đang ở đâu trên hành trình
 public class LevelIntro : MonoBehaviour
 {
-    static readonly string[] Titles = { "Khu rung", "Ho nuoc", "Hang da" };
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
@@ -15,9 +14,9 @@ public class LevelIntro : MonoBehaviour
         {
             // index 0 là menu, các màn bắt đầu từ 1
             int level = GameHUD.LevelNumber(scene.name);
-            if (level < 1 || level > Titles.Length) return;
+            if (level < 1 || level > AdventureProgress.Count) return;
             GameObject go = new GameObject("LevelIntro");
-            go.AddComponent<LevelIntro>().Show("Man " + level + "/" + Titles.Length, Titles[level - 1]);
+            go.AddComponent<LevelIntro>().Show("Level " + level + "/" + AdventureProgress.Count, AdventureProgress.Titles[level - 1]);
         };
     }
 
@@ -31,6 +30,7 @@ public class LevelIntro : MonoBehaviour
         scaler.referenceResolution = new Vector2(1280, 720);
         CanvasGroup group = gameObject.AddComponent<CanvasGroup>();
         group.blocksRaycasts = false;
+        CuteTheme.Card(transform, Vector2.one * 0.5f, new Vector2(0, 70), new Vector2(480, 175));
         AddText(top, 36, 90);
         AddText(title, 72, 20);
         StartCoroutine(Fade(group));
@@ -44,9 +44,7 @@ public class LevelIntro : MonoBehaviour
         t.text = s;
         t.fontSize = size;
         t.alignment = TextAlignmentOptions.Center;
-        t.color = Color.white;
-        t.outlineWidth = 0.2f;
-        t.outlineColor = Color.black;
+        CuteTheme.Text(t, size);
         t.rectTransform.sizeDelta = new Vector2(1200, size * 1.5f);
         t.rectTransform.anchoredPosition = new Vector2(0, y);
     }

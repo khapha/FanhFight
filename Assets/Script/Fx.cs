@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 // Âm thanh 8-bit tạo bằng code + hạt bụi/nổ, không cần file asset
 public class Fx : MonoBehaviour
@@ -8,6 +10,8 @@ public class Fx : MonoBehaviour
     AudioClip jumpClip, hurtClip, explodeClip, coinClip, hitClip, sprayClip, musicClip;
     Material particleMat;
     const int Rate = 22050;
+    readonly Queue<FxParticle> availableParticles = new Queue<FxParticle>(24);
+    readonly List<FxParticle> allParticles = new List<FxParticle>(24);
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void Init()
@@ -36,6 +40,60 @@ public class Fx : MonoBehaviour
         music.Play();
 
         particleMat = new Material(Shader.Find("Sprites/Default"));
+        for (int i = 0; i < 8; i++) availableParticles.Enqueue(CreateParticle());
+        SceneManager.sceneLoaded += ClearParticles;
+    }
+
+    FxParticle CreateParticle()
+    {
+        GameObject go = new GameObject("PooledEffect");
+        go.transform.SetParent(transform, false);
+        ParticleSystem ps = go.AddComponent<ParticleSystem>();
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        var main = ps.main;
+        main.playOnAwake = false;
+        main.loop = false;
+        main.stopAction = ParticleSystemStopAction.Callback;
+        FxParticle effect = go.AddComponent<FxParticle>();
+        effect.Owner = this;
+        effect.System = ps;
+        go.GetComponent<ParticleSystemRenderer>().sharedMaterial = particleMat;
+        go.SetActive(false);
+        allParticles.Add(effect);
+        return effect;
+    }
+
+    ParticleSystem TakeParticle(Vector3 position)
+    {
+        FxParticle effect = availableParticles.Count > 0 ? availableParticles.Dequeue()
+            : allParticles.Count < 24 ? CreateParticle() : null;
+        if (effect == null) return null;
+        effect.InUse = true;
+        effect.transform.position = position;
+        effect.gameObject.SetActive(true);
+        return effect.System;
+    }
+
+    public void ReturnParticle(FxParticle effect)
+    {
+        if (!effect.InUse) return;
+        effect.InUse = false;
+        effect.System.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        effect.gameObject.SetActive(false);
+        availableParticles.Enqueue(effect);
+    }
+
+    void ClearParticles(Scene scene, LoadSceneMode mode)
+    {
+        foreach (FxParticle effect in allParticles)
+            if (effect.InUse) ReturnParticle(effect);
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= ClearParticles;
+        if (particleMat != null) Destroy(particleMat);
+        if (instance == this) instance = null;
     }
 
     // sóng vuông trượt tần số, trộn thêm nhiễu
@@ -113,9 +171,8 @@ public class Fx : MonoBehaviour
     public static void Burst(Vector3 pos, Color color, int count, float speed, float size)
     {
         if (instance == null) return;
-        GameObject go = new GameObject("Burst");
-        go.transform.position = pos;
-        ParticleSystem ps = go.AddComponent<ParticleSystem>();
+        ParticleSystem ps = instance.TakeParticle(pos);
+        if (ps == null) return;
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         var main = ps.main;
@@ -127,13 +184,16 @@ public class Fx : MonoBehaviour
         main.startColor = color;
         main.gravityModifier = 0.5f;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.stopAction = ParticleSystemStopAction.Destroy;
+        main.stopAction = ParticleSystemStopAction.Callback;
 
         var emission = ps.emission;
         emission.rateOverTime = 0;
         var shape = ps.shape;
+        shape.enabled = true;
         shape.shapeType = ParticleSystemShapeType.Circle;
         shape.radius = 0.1f;
+        var sizeOverLife = ps.sizeOverLifetime;
+        sizeOverLife.enabled = false;
         var col = ps.colorOverLifetime;
         col.enabled = true;
         Gradient g = new Gradient();
@@ -141,12 +201,12 @@ public class Fx : MonoBehaviour
                   new[] { new GradientAlphaKey(1, 0), new GradientAlphaKey(0, 1) });
         col.color = g;
 
-        ParticleSystemRenderer r = go.GetComponent<ParticleSystemRenderer>();
-        r.material = instance.particleMat;
+        ParticleSystemRenderer r = ps.GetComponent<ParticleSystemRenderer>();
+        r.sharedMaterial = instance.particleMat;
         r.sortingOrder = 50;
 
-        ps.Emit(count);
         ps.Play();
+        ps.Emit(count);
     }
 
     // luồng khí xịt từ bình xịt phun ra phía trước
@@ -154,16 +214,15 @@ public class Fx : MonoBehaviour
     {
         if (instance == null) return;
         Play(instance.sprayClip, 0.5f);
-        GameObject go = new GameObject("Spray");
-        go.transform.position = pos + new Vector3(right ? 0.6f : -0.6f, 0.15f, 0);
-        ParticleSystem ps = go.AddComponent<ParticleSystem>();
+        ParticleSystem ps = instance.TakeParticle(pos + new Vector3(right ? 0.6f : -0.6f, 0.15f, 0));
+        if (ps == null) return;
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         var main = ps.main;
         main.loop = false;
         main.duration = 0.4f;
         main.gravityModifier = 0;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.stopAction = ParticleSystemStopAction.Destroy;
+        main.stopAction = ParticleSystemStopAction.Callback;
         var emission = ps.emission;
         emission.rateOverTime = 0;
         var shape = ps.shape;
@@ -178,10 +237,11 @@ public class Fx : MonoBehaviour
         g.SetKeys(new[] { new GradientColorKey(Color.white, 0), new GradientColorKey(Color.white, 1) },
                   new[] { new GradientAlphaKey(0.8f, 0), new GradientAlphaKey(0, 1) });
         col.color = g;
-        ParticleSystemRenderer r = go.GetComponent<ParticleSystemRenderer>();
-        r.material = instance.particleMat;
+        ParticleSystemRenderer r = ps.GetComponent<ParticleSystemRenderer>();
+        r.sharedMaterial = instance.particleMat;
         r.sortingOrder = 40;
         float dir = right ? 1f : -1f;
+        ps.Play();
         for (int i = 0; i < 28; i++)
         {
             ParticleSystem.EmitParams e = new ParticleSystem.EmitParams();
@@ -191,22 +251,23 @@ public class Fx : MonoBehaviour
             e.startColor = new Color(0.75f, 1f, 0.8f);
             ps.Emit(e, 1);
         }
-        ps.Play();
     }
 
     // khựng hình rất ngắn khi đánh trúng cho có lực
-    public static void HitStop(float seconds = 0.06f)
+    public static void HitStop(float seconds = 0.035f)
     {
-        if (instance == null || Time.timeScale == 0) return;
+        if (instance == null || !GameSession.IsPlaying || Time.timeScale == 0) return;
         Hit();
         instance.StartCoroutine(instance.DoHitStop(seconds));
     }
 
     System.Collections.IEnumerator DoHitStop(float seconds)
     {
-        Time.timeScale = 0.05f;
+        int sceneVersion = GameSession.SceneVersion;
+        Time.timeScale = 0.35f;
         yield return new WaitForSecondsRealtime(seconds);
-        if (Time.timeScale > 0) Time.timeScale = 1;
+        if (sceneVersion == GameSession.SceneVersion && GameSession.IsPlaying && Time.timeScale > 0)
+            Time.timeScale = 1;
     }
 
     // chữ bay lên rồi mờ dần (ví dụ "+1" khi nhặt xu)
@@ -231,6 +292,7 @@ public class Fx : MonoBehaviour
         Color c = t.color;
         for (float a = 0; a < 0.7f; a += Time.deltaTime)
         {
+            if (t == null) yield break;
             t.transform.position += new Vector3(0, Time.deltaTime * 1.5f, 0);
             c.a = 1f - a / 0.7f;
             t.color = c;

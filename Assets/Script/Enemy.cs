@@ -19,6 +19,7 @@ public class Enemy : MonoBehaviour
     public float verticalRange = 1.5f;
     public float retreatTime = 1f;
     private float homeX, homeY, retreatTimer;
+    bool defeated;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -28,12 +29,13 @@ public class Enemy : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         rb2d = GetComponent<Rigidbody2D>();
+        rb2d.interpolation = RigidbodyInterpolation2D.Interpolate;
         homeX = transform.position.x;
         homeY = transform.position.y;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         FlyAnimator.SetBool("Fly", fly);
         //distance to player
@@ -90,7 +92,7 @@ public class Enemy : MonoBehaviour
 
         if (collision.isTrigger == false)
         {
-            if (collision.CompareTag("Player"))
+            if (collision.CompareTag("Player") && player.CanTakeDamage)
             {
                 collision.SendMessageUpwards("Damage", 1);
                 player.KnockBack(400f, transform.position);
@@ -99,13 +101,24 @@ public class Enemy : MonoBehaviour
             }
         }
         if (collision.CompareTag("actacktrigger"))
-        {
-            Fx.HitStop();
-            Fx.Popup(transform.position, "+5", new Color(1f, 0.6f, 0.3f));
-            if (player != null && player.gm != null) player.gm.points += 5;
-            Fx.Burst(transform.position, new Color(0.5f, 0.3f, 0.2f), 15, 3f, 0.2f);
-            Destroy(gameObject);
-        }
+            Defeat();
+    }
+
+    // AttackTrigger sends Damage upwards; multiple colliders may report one hit.
+    void Damage(int damage)
+    {
+        if (damage > 0) Defeat();
+    }
+
+    void Defeat()
+    {
+        if (defeated || player == null || !player.CanAct) return;
+        defeated = true;
+        Fx.HitStop();
+        Fx.Popup(transform.position, "+5", new Color(1f, 0.6f, 0.3f));
+        if (player.gm != null) player.gm.points += 5;
+        Fx.Burst(transform.position, new Color(0.5f, 0.3f, 0.2f), 15, 3f, 0.2f);
+        Destroy(gameObject);
     }
 
 }

@@ -11,11 +11,13 @@ public class PlayerAttack : MonoBehaviour
     public Animator anim;
 
     public Collider2D trigger;
+    Player player;
 
     private void Awake()
     {
         anim = gameObject.GetComponent<Animator>();
-        trigger.enabled = false;
+        player = GetComponent<Player>();
+        CancelAttack();
     }
 
     // Start is called before the first frame update
@@ -28,6 +30,11 @@ public class PlayerAttack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!GameSession.IsPlaying || (player != null && !player.CanAct))
+        {
+            CancelAttack();
+            return;
+        }
         if((GameInput.Attack.WasPressedThisFrame() && !attacking) || (battack == true && !attacking))
         {
             attacking = true;
@@ -54,4 +61,14 @@ public class PlayerAttack : MonoBehaviour
     {
         battack = attack;
     }
+
+    public void CancelAttack()
+    {
+        attacking = battack = false;
+        acttackdelay = 0;
+        if (trigger != null) trigger.enabled = false;
+        if (anim != null) anim.SetBool("Attacking", false);
+    }
+
+    void OnDisable() { CancelAttack(); }
 }

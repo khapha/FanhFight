@@ -61,7 +61,7 @@ public class Checkpoint : MonoBehaviour
         Checkpoint cp = go.AddComponent<Checkpoint>();
         cp.flag = f.AddComponent<SpriteRenderer>();
         cp.flag.sprite = flagSprite;
-        cp.flag.color = new Color(0.6f, 0.6f, 0.6f);
+        cp.flag.color = CuteTheme.Pink;
         cp.flag.sortingOrder = 5;
         BoxCollider2D bc = go.AddComponent<BoxCollider2D>();
         bc.isTrigger = true;
@@ -92,9 +92,11 @@ public class Checkpoint : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (reached || !other.CompareTag("Player")) return;
+        Player player = other.GetComponent<Player>();
+        if (player == null || !player.CanAct) return;
         reached = true;
         SpawnPoint = transform.position + new Vector3(0, 1f, 0);
-        flag.color = new Color(0.3f, 0.9f, 0.4f);
+        flag.color = CuteTheme.Mint;
         Fx.Burst(flag.transform.position, new Color(0.3f, 0.9f, 0.4f), 20, 3f, 0.15f);
         Fx.Coin();
         GameHUD.Toast("Checkpoint!");

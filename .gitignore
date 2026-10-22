@@ -359,6 +359,7 @@ crashlytics-build.properties
 !/Packages/**/*.meta
 # file do Unity/IDE tự sinh
 *.csproj
+!/Tests/**/*.csproj
 *.sln
 .vscode/
 .vs/

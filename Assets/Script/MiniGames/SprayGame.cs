@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
@@ -23,13 +21,14 @@ public class SprayGame : MonoBehaviour
     Rect area;
     readonly List<Roach> roaches = new List<Roach>();
     readonly List<GameObject> flowers = new List<GameObject>();
-    readonly StringBuilder save = new StringBuilder();
+    readonly Dictionary<GameObject, GardenSave.Flower> flowerData = new Dictionary<GameObject, GardenSave.Flower>();
     TextMeshProUGUI countText;
     ParticleSystem mist;
     AudioSource hiss;
     Transform bottle;
     float spawnTimer;
     int total;
+    int displayedFlowers = -1;
 
     static readonly Color[] FlowerColors = {
         new Color(1f, 0.6f, 0.75f), new Color(0.7f, 0.8f, 1f), new Color(1f, 0.95f, 0.6f),
@@ -45,13 +44,14 @@ public class SprayGame : MonoBehaviour
         LoadGarden();
 
         Canvas canvas = MiniUI.MakeCanvas("UI");
-        Transform c = canvas.transform;
+        Transform c = SafeArea.Create(canvas.transform);
+        float countY = Screen.width < Screen.height ? -105 : -40;
+        CuteTheme.Card(c, new Vector2(0.5f, 1), new Vector2(0, countY), new Vector2(250, 58));
         MiniUI.MakeButton(c, "< Menu", new Vector2(0, 1), new Vector2(90, -40), new Vector2(150, 50), MiniUI.BackToMenu);
-        MiniUI.MakeButton(c, "Lam moi vuon", new Vector2(1, 1), new Vector2(-120, -40), new Vector2(210, 50), ClearGarden);
-        countText = MiniUI.MakeText(c, "", 30, new Vector2(0.5f, 1), new Vector2(0, -40));
-        countText.color = Color.white;
-        countText.outlineColor = new Color(0.15f, 0.35f, 0.15f);
-        TextMeshProUGUI hint = MiniUI.MakeText(c, "Giu va di chuyen binh xit, nham voi vao gian", 26, new Vector2(0.5f, 0), new Vector2(0, 40));
+        MiniUI.MakeButton(c, "Reset Garden", new Vector2(1, 1), new Vector2(-120, -40), new Vector2(210, 50), ClearGarden);
+        countText = MiniUI.MakeText(c, "", 28, new Vector2(0.5f, 1), new Vector2(0, countY));
+        CuteTheme.Text(countText, 28);
+        TextMeshProUGUI hint = MiniUI.MakeText(c, "Hold and move the spray to aim at roaches", 26, new Vector2(0.5f, 0), new Vector2(0, 40));
         hint.color = Color.white;
         hint.outlineColor = new Color(0.15f, 0.35f, 0.15f);
         StartCoroutine(FadeHint(hint));
@@ -109,13 +109,17 @@ public class SprayGame : MonoBehaviour
         }
         else if (hiss.isPlaying) hiss.Stop();
 
-        countText.text = "Vuon co " + flowers.Count + " bong hoa";
+        if (displayedFlowers != flowers.Count)
+        {
+            displayedFlowers = flowers.Count;
+            countText.text = "Flowers: " + displayedFlowers;
+        }
     }
 
-    static Vector2 PointerWorld()
+    Vector2 PointerWorld()
     {
         Vector2 screen = Pointer.current != null ? Pointer.current.position.ReadValue() : new Vector2(Screen.width / 2f, Screen.height / 3f);
-        return Camera.main.ScreenToWorldPoint(screen);
+        return cam.ScreenToWorldPoint(screen);
     }
 
     // gián hoá thành hoa nở trên cỏ, lưu vào khu vườn
@@ -132,6 +136,7 @@ public class SprayGame : MonoBehaviour
         StartCoroutine(Grow(f.transform, size));
         if (flowers.Count > maxFlowers)
         {
+            flowerData.Remove(flowers[0]);
             Destroy(flowers[0]);
             flowers.RemoveAt(0);
         }
@@ -149,6 +154,7 @@ public class SprayGame : MonoBehaviour
         f.transform.rotation = Quaternion.Euler(0, 0, rot);
         f.transform.localScale = Vector3.one * size;
         flowers.Add(f);
+        flowerData[f] = new GardenSave.Flower(pos, Mathf.Clamp(color, 0, FlowerColors.Length - 1), size, rot);
         return f;
     }
 
@@ -167,36 +173,26 @@ public class SprayGame : MonoBehaviour
     // ---- lưu khu vườn: "x,y,màu,cỡ,góc;..." ----
     void SaveGarden()
     {
-        save.Clear();
+        List<GardenSave.Flower> data = new List<GardenSave.Flower>();
         foreach (GameObject f in flowers)
-        {
-            SpriteRenderer sr = f.GetComponent<SpriteRenderer>();
-            int color = System.Array.IndexOf(FlowerColors, sr.color);
-            Vector3 p = f.transform.position;
-            save.Append(string.Format(CultureInfo.InvariantCulture, "{0:F2},{1:F2},{2},{3:F2},{4:F0};",
-                p.x, p.y, Mathf.Max(color, 0), f.transform.localScale.x, f.transform.eulerAngles.z));
-        }
-        PlayerPrefs.SetString(SaveKey, save.ToString());
+            data.Add(flowerData[f]);
+        PlayerPrefs.SetString(SaveKey, GardenSave.Write(data));
         PlayerPrefs.Save();
     }
 
     void LoadGarden()
     {
-        foreach (string item in PlayerPrefs.GetString(SaveKey, "").Split(';'))
-        {
-            string[] v = item.Split(',');
-            if (v.Length != 5) continue;
-            var ci = CultureInfo.InvariantCulture;
-            PlantFlower(new Vector2(float.Parse(v[0], ci), float.Parse(v[1], ci)),
-                        int.Parse(v[2], ci), float.Parse(v[3], ci), float.Parse(v[4], ci));
-        }
+        foreach (GardenSave.Flower flower in GardenSave.Read(PlayerPrefs.GetString(SaveKey, ""), maxFlowers, FlowerColors.Length))
+            PlantFlower(flower.Position, flower.Color, flower.Size, flower.Rotation);
     }
 
     void ClearGarden()
     {
         foreach (GameObject f in flowers) Destroy(f);
         flowers.Clear();
+        flowerData.Clear();
         PlayerPrefs.DeleteKey(SaveKey);
+        PlayerPrefs.Save();
     }
 
     void MakeBottle()

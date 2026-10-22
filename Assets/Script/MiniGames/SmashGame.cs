@@ -18,6 +18,7 @@ public class SmashGame : MonoBehaviour
     int score, combo, smashed;
     float timeLeft, spawnTimer, comboTimer;
     bool playing;
+    int displayedScore = -1, displayedSeconds = -1, displayedCombo = -1;
 
     void Start()
     {
@@ -26,11 +27,17 @@ public class SmashGame : MonoBehaviour
         MiniUI.MakeFloor(cam);
 
         canvas = MiniUI.MakeCanvas("UI");
-        Transform c = canvas.transform;
+        Transform c = SafeArea.Create(canvas.transform);
+        bool compact = Screen.width < Screen.height;
+        float scoreY = compact ? -105 : -40;
+        CuteTheme.Card(c, new Vector2(0.5f, 1), new Vector2(0, scoreY), new Vector2(250, 60));
+        CuteTheme.Card(c, new Vector2(1, 1), new Vector2(-80, -40), new Vector2(140, 60));
         MiniUI.MakeButton(c, "< Menu", new Vector2(0, 1), new Vector2(90, -40), new Vector2(150, 50), MiniUI.BackToMenu);
-        scoreText = MiniUI.MakeText(c, "", 36, new Vector2(0.5f, 1), new Vector2(0, -40));
-        timeText = MiniUI.MakeText(c, "", 36, new Vector2(1, 1), new Vector2(-120, -40));
-        comboText = MiniUI.MakeText(c, "", 30, new Vector2(0.5f, 1), new Vector2(0, -90));
+        scoreText = MiniUI.MakeText(c, "", 32, new Vector2(0.5f, 1), new Vector2(0, scoreY));
+        timeText = MiniUI.MakeText(c, "", 32, new Vector2(1, 1), new Vector2(-80, -40));
+        CuteTheme.Text(scoreText, 32);
+        CuteTheme.Text(timeText, 32);
+        comboText = MiniUI.MakeText(c, "", 28, new Vector2(0.5f, 1), new Vector2(0, scoreY - 60));
         comboText.color = new Color(0.85f, 0.4f, 0.1f);
         bigText = MiniUI.MakeText(c, "", 90, new Vector2(0.5f, 0.5f), new Vector2(0, 40));
         StartCoroutine(Countdown());
@@ -41,7 +48,7 @@ public class SmashGame : MonoBehaviour
         score = 0; combo = 0; smashed = 0;
         timeLeft = duration;
         UpdateTexts();
-        foreach (string s in new[] { "3", "2", "1", "Dap!" })
+        foreach (string s in new[] { "3", "2", "1", "Smash!" })
         {
             bigText.text = s;
             Fx.Coin();
@@ -184,9 +191,10 @@ public class SmashGame : MonoBehaviour
 
     void UpdateTexts()
     {
-        scoreText.text = "Diem: " + score;
-        timeText.text = Mathf.CeilToInt(Mathf.Max(timeLeft, 0)) + "s";
-        comboText.text = combo >= 3 ? "Combo x" + combo : "";
+        if (displayedScore != score) { displayedScore = score; scoreText.text = "Score: " + score; }
+        int seconds = Mathf.CeilToInt(Mathf.Max(timeLeft, 0));
+        if (displayedSeconds != seconds) { displayedSeconds = seconds; timeText.text = seconds + "s"; }
+        if (displayedCombo != combo) { displayedCombo = combo; comboText.text = combo >= 3 ? "Combo x" + combo : ""; }
     }
 
     void End()
@@ -201,14 +209,14 @@ public class SmashGame : MonoBehaviour
         endPanel = MiniUI.Panel(canvas.transform, new Color(0, 0, 0, 0.6f));
         Transform p = endPanel.transform;
         foreach (TextMeshProUGUI t in new[] {
-            MiniUI.MakeText(p, "Het gio!", 72, new Vector2(0.5f, 0.5f), new Vector2(0, 170)),
-            MiniUI.MakeText(p, "Diem: " + score + "     Da dap: " + smashed + " con", 40, new Vector2(0.5f, 0.5f), new Vector2(0, 80)),
-            MiniUI.MakeText(p, "Ky luc: " + best, 34, new Vector2(0.5f, 0.5f), new Vector2(0, 25)) })
+            MiniUI.MakeText(p, "Time's up!", 72, new Vector2(0.5f, 0.5f), new Vector2(0, 170)),
+            MiniUI.MakeText(p, "Score: " + score + "     Smashes: " + smashed, 40, new Vector2(0.5f, 0.5f), new Vector2(0, 80)),
+            MiniUI.MakeText(p, "Best: " + best, 34, new Vector2(0.5f, 0.5f), new Vector2(0, 25)) })
         {
             t.color = Color.white;
             t.outlineColor = Color.black;
         }
-        Button again = MiniUI.MakeButton(p, "Choi lai", new Vector2(0.5f, 0.5f), new Vector2(-120, -70), new Vector2(200, 60), Restart);
+        Button again = MiniUI.MakeButton(p, "Play Again", new Vector2(0.5f, 0.5f), new Vector2(-120, -70), new Vector2(200, 60), Restart);
         MiniUI.MakeButton(p, "Menu", new Vector2(0.5f, 0.5f), new Vector2(120, -70), new Vector2(200, 60), MiniUI.BackToMenu);
         MiniUI.Select(again);
     }

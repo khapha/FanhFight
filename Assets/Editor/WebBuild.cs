@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Build.Reporting;
 using UnityEngine;
 
 // Build bản web (WebGL) vào thư mục WebBuild, chạy được trên GitHub Pages
@@ -16,6 +17,8 @@ public static class WebBuild
 
         string[] scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
         var report = BuildPipeline.BuildPlayer(scenes, "WebBuild", BuildTarget.WebGL, BuildOptions.None);
+        if (report.summary.result != BuildResult.Succeeded)
+            throw new System.Exception("WebGL build failed: " + report.summary.result);
         Debug.Log("WebBuild: " + report.summary.result + " size " + report.summary.totalSize);
     }
 }

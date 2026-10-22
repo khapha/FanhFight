@@ -33,11 +33,13 @@ public class FallingPlat : MonoBehaviour
         falling = true;
         yield return new WaitForSeconds(timedelay);
         r2.bodyType = RigidbodyType2D.Dynamic;
+        r2.interpolation = RigidbodyInterpolation2D.Interpolate;
         // rơi xong một lúc thì hiện lại chỗ cũ, để không bị kẹt trước hố
         yield return new WaitForSeconds(respawnDelay);
-        r2.bodyType = startType;
+        // Clear motion while the body is still dynamic: static bodies reject velocity writes.
         r2.linearVelocity = Vector2.zero;
         r2.angularVelocity = 0;
+        r2.bodyType = startType;
         transform.SetPositionAndRotation(startPos, startRot);
         falling = false;
     }

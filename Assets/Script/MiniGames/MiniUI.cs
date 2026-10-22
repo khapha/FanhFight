@@ -8,6 +8,7 @@ using TMPro;
 // Tiện ích chung cho mini-game: giao diện dựng bằng code, đọc chạm/chuột
 public static class MiniUI
 {
+    static readonly System.Collections.Generic.List<Vector2> taps = new System.Collections.Generic.List<Vector2>(10);
     public static Canvas MakeCanvas(string name)
     {
         GameObject go = new GameObject(name);
@@ -63,6 +64,7 @@ public static class MiniUI
         t.color = new Color(0.2f, 0.15f, 0.1f);
         t.outlineWidth = 0;
         t.rectTransform.sizeDelta = size;
+        CuteTheme.Button(b);
         return b;
     }
 
@@ -87,8 +89,7 @@ public static class MiniUI
 
     public static void BackToMenu()
     {
-        Time.timeScale = 1;
-        SceneManager.LoadScene(0);
+        GameSession.LoadScene(0);
     }
 
     // khung màn hình theo toạ độ thế giới (trừ lề)
@@ -121,7 +122,8 @@ public static class MiniUI
     // những điểm vừa chạm/bấm trong khung hình này (nhiều ngón cùng lúc)
     public static System.Collections.Generic.List<Vector2> Taps(Camera cam)
     {
-        var list = new System.Collections.Generic.List<Vector2>();
+        var list = taps;
+        list.Clear();
         if (Touchscreen.current != null)
         {
             foreach (var t in Touchscreen.current.touches)
@@ -138,7 +140,7 @@ public static class MiniUI
     {
         if (Touchscreen.current != null)
             foreach (var t in Touchscreen.current.touches)
-                if (t.press.isPressed)
+                if (t.press.isPressed && !OverUI(t.touchId.ReadValue()))
                     return cam.ScreenToWorldPoint(t.position.ReadValue());
         if (Mouse.current != null && Mouse.current.leftButton.isPressed && !OverUI(-1))
             return cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());

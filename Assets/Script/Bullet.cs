@@ -8,6 +8,8 @@ public class Bullet : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Rigidbody2D body = GetComponent<Rigidbody2D>();
+        if (body != null) body.interpolation = RigidbodyInterpolation2D.Interpolate;
     }
 
     // Update is called once per frame

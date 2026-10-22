@@ -16,15 +16,20 @@ public class Door : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerInside && GameInput.Interact.WasPressedThisFrame())
+        if (GameInput.Interact.WasPressedThisFrame()) TryEnter();
+    }
+    public void TryEnter()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (playerInside && player != null && player.GetComponent<Player>().CanAct)
             EnterDoor();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            savescore();
-            gm.InputText.text = ("Press E / Y to enter");
+            playerInside = true;
+            gm.InputText.text = Application.isMobilePlatform ? "Tap Enter to go through the door" : "Press E / Y to enter";
         }
     }
     private void OnTriggerStay2D(Collider2D collision)
@@ -36,13 +41,14 @@ public class Door : MonoBehaviour
     {
         savescore();
         gm.SaveHighscore();
+        AdventureProgress.Complete(GameHUD.LevelNumber(SceneManager.GetActiveScene().name), gm.points - gm.EntryPoints);
         // sang màn kế tiếp trong Build Settings, hết màn thì thắng
         int next = SceneManager.GetActiveScene().buildIndex + 1;
         // chỉ sang màn kế nếu đó là màn phiêu lưu (sau màn cuối là các mini-game)
         string nextName = next < SceneManager.sceneCountInBuildSettings
             ? System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(next)) : "";
         if (GameHUD.LevelNumber(nextName) > 0)
-            SceneManager.LoadScene(next);
+            GameSession.LoadScene(next);
         else
             GameOverUI.Show("YOU WIN!", gm.points, gm.highscore);
     }

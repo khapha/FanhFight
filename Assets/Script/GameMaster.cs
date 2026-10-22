@@ -9,6 +9,8 @@ public class GameMaster : MonoBehaviour
 {
     public int points = 0;
     public int highscore = 0;
+    public int EntryPoints { get; private set; }
+    int displayedPoints = -1;
 
     public TMP_Text pointText;
     public TMP_Text Hightext;
@@ -32,6 +34,7 @@ public class GameMaster : MonoBehaviour
             else
                 points = PlayerPrefs.GetInt("points");
         }
+        EntryPoints = points;
     }
 
     public void SaveHighscore()
@@ -47,6 +50,8 @@ public class GameMaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        pointText.text = ("Points: " + points);
+        if (displayedPoints == points || pointText == null) return;
+        displayedPoints = points;
+        pointText.text = "Points: " + points;
     }
 }

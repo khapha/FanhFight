@@ -23,6 +23,9 @@ public class CameraRig : MonoBehaviour
         if (oldFollow != null) oldFollow.enabled = false;
         if (main.GetComponent<CinemachineBrain>() == null)
             main.gameObject.AddComponent<CinemachineBrain>();
+        CinemachineBrain brain = main.GetComponent<CinemachineBrain>();
+        brain.UpdateMethod = CinemachineBrain.UpdateMethods.LateUpdate;
+        brain.BlendUpdateMethod = CinemachineBrain.BrainUpdateMethods.LateUpdate;
 
         GameObject rig = new GameObject("CM Camera");
         rig.transform.position = main.transform.position;
@@ -34,15 +37,17 @@ public class CameraRig : MonoBehaviour
         composer.CameraDistance = Mathf.Abs(main.transform.position.z - player.transform.position.z);
         composer.Damping = new Vector3(0.3f, 0.4f, 0);
         composer.TargetOffset = new Vector3(0, 1f, 0);
-        composer.Lookahead.Enabled = true;
+        // Velocity lookahead amplifies abrupt stops and direction changes.
+        composer.Lookahead.Enabled = false;
         composer.Lookahead.Time = 0.2f;
         composer.Lookahead.IgnoreY = true;
 
-        // giữ giới hạn khung cũ của CameraFollow (vùng tâm camera được đi tới + nửa khung nhìn)
+        // Scene limits were authored for the 1280x720 view. Keep the world boundary
+        // fixed across aspect ratios so a portrait camera can still center on spawn.
         if (oldFollow != null && oldFollow.bound)
         {
             float halfH = main.orthographicSize;
-            float halfW = halfH * main.aspect;
+            float halfW = halfH * (1280f / 720f);
             Vector2 min = oldFollow.minipos - new Vector2(halfW, halfH);
             Vector2 max = oldFollow.maxpos + new Vector2(halfW, halfH);
             GameObject bounds = new GameObject("CameraBounds");
@@ -64,6 +69,11 @@ public class CameraRig : MonoBehaviour
 
     public static void Shake(float force)
     {
-        if (impulse != null) impulse.GenerateImpulseWithForce(force * 0.3f);
+        if (impulse != null) impulse.GenerateImpulseWithForce(force * 0.12f);
+    }
+
+    public static void Warp(Transform target, Vector3 delta)
+    {
+        CinemachineCore.OnTargetObjectWarped(target, delta);
     }
 }

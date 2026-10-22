@@ -8,17 +8,11 @@ public class PlatformDown : MonoBehaviour
     {
         if (collision.collider.CompareTag("Player"))
         {
-            if (GameInput.Down.IsPressed())
+            if (GameSession.IsPlaying && (GameInput.Down.IsPressed() || TouchButtons.DownHeld))
             {
                 gameObject.GetComponent<Collider2D>().enabled = false;
+                Invoke("Restore", 0.5f);
             }
-        }
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.collider.CompareTag("Player"))
-        {
-            Invoke("Restore", 0.5f);
         }
     }
     void Restore()

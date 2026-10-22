@@ -19,6 +19,8 @@ public class Player : MonoBehaviour
     public bool jump = false;
     private float baseSpeed, baseMaxspeed;
     private bool dead = false;
+    public bool CanAct => !dead && ourHealth > 0 && GameSession.IsPlaying;
+    public bool CanTakeDamage => CanAct && invincibleTimer <= 0;
     public float coyoteTime = 0.1f, jumpBuffer = 0.1f, invincibleTime = 1f;
     private float coyoteTimer, bufferTimer, invincibleTimer;
     private bool prevJump = false;
@@ -29,6 +31,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         r2 = gameObject.GetComponent<Rigidbody2D>();   
+        r2.interpolation = RigidbodyInterpolation2D.Interpolate;
         anim = gameObject.GetComponent<Animator>();
         sr = gameObject.GetComponent<SpriteRenderer>();
         baseSpeed = speed;
@@ -43,7 +46,13 @@ public class Player : MonoBehaviour
     {
         anim.SetBool("Grounded", grounded);
         anim.SetFloat("Speed", Mathf.Abs(r2.linearVelocity.x));
-        if (dead) return;
+        if (!CanAct)
+        {
+            h = 0;
+            jump = prevJump = false;
+            bufferTimer = 0;
+            return;
+        }
 
         // coyote time: vẫn nhảy được ngay sau khi rời mép
         if (grounded) coyoteTimer = coyoteTime;
@@ -87,7 +96,8 @@ public class Player : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (dead) return;
+        if (!dead && ourHealth <= 0) Death();
+        if (!CanAct) return;
         Move(h);
         r2.AddForce((Vector2.right) * speed * h);
 
@@ -171,11 +181,19 @@ public class Player : MonoBehaviour
     {
         if (dead) return;
         dead = true;
+        h = 0;
+        jump = prevJump = false;
+        bufferTimer = coyoteTimer = 0;
+        PlayerAttack attack = GetComponent<PlayerAttack>();
+        if (attack != null) attack.CancelAttack();
         gm.SaveHighscore();
         if (sr != null) sr.enabled = true;
         Checkpoint.Lives--;
         if (Checkpoint.Lives > 0)
+        {
+            GameSession.BeginRespawn();
             StartCoroutine(Respawn());
+        }
         else
             GameOverUI.Show("GAME OVER", gm.points, gm.highscore);
     }
@@ -187,10 +205,15 @@ public class Player : MonoBehaviour
         Fx.Burst(transform.position, Color.white, 20, 3f, 0.2f);
         if (sr != null) sr.enabled = false;
         yield return new WaitForSeconds(0.8f);
+        Vector3 previousPosition = transform.position;
+        r2.position = Checkpoint.SpawnPoint;
         transform.position = Checkpoint.SpawnPoint;
+        CameraRig.Warp(transform, transform.position - previousPosition);
         r2.linearVelocity = Vector2.zero;
         ourHealth = maxhealth;
         dead = false;
+        grounded = doublejump = false;
+        GameSession.EndRespawn();
         invincibleTimer = invincibleTime * 1.5f;
         if (sr != null) sr.enabled = true;
     }
@@ -199,12 +222,14 @@ public class Player : MonoBehaviour
 
     public void Damage(int damage)
     {
-        if (dead || invincibleTimer > 0) return;
+        if (!CanTakeDamage) return;
         invincibleTimer = invincibleTime;
         Fx.Hurt();
         CameraRig.Shake(1f);
         ourHealth -= damage;
-        gameObject.GetComponent<Animation>().Play("RedFlash");
+        Animation flash = GetComponent<Animation>();
+        if (flash != null) flash.Play("RedFlash");
+        if (ourHealth <= 0) Death();
     }
     public void KnockBack (float Knockpow, Vector2 sourcePos)
     {
@@ -217,6 +242,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (!CanAct) return;
         if (collision.CompareTag("Coins"))
         {
             sound.Playsound("coins");

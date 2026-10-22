@@ -1,168 +1,146 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
-    GameObject helpPanel;
+    GameObject modal;
+    Button[] menuButtons;
+    Button playButton, helpButton, returnFocus;
     TextMeshProUGUI musicText, sfxText;
-    Button playButton, helpButton;
 
     void Start()
     {
-        // menu chọn game: nhân bản nút Quit thành các nút mới, xếp thành cột dưới nút Play
-        Button quit = null;
-        foreach (Button b in GetComponentsInChildren<Button>(true))
-        {
-            if (b.name == "Play") playButton = b;
-            if (b.name == "Quit") quit = b;
-        }
-        if (quit != null)
-        {
-            RectTransform p = (RectTransform)playButton.transform;
-            float step = p.anchoredPosition.y - ((RectTransform)quit.transform).anchoredPosition.y;
-            playButton.GetComponentInChildren<TMP_Text>().text = "Phieu luu";
-            Button smash = CloneButton(quit, "Dap dep", () => SceneManager.LoadScene("MiniSmash"));
-            Button spray = CloneButton(quit, "Khu vuon hoa", () => SceneManager.LoadScene("MiniSpray"));
-            helpButton = CloneButton(quit, "Huong dan", HowToPlay);
-            Button[] order = { playButton, smash, spray, helpButton, quit };
-            for (int i = 0; i < order.Length; i++)
-                ((RectTransform)order[i].transform).anchoredPosition = p.anchoredPosition - new Vector2(0, step * i);
-        }
-        // tiêu đề sáng, có viền cho nổi trên nền rừng
-        foreach (TMP_Text t in GetComponentInParent<Canvas>().GetComponentsInChildren<TMP_Text>(true))
-            if (t.text == "Fanh Fight")
-            {
-                t.color = new Color(1f, 0.9f, 0.4f);
-                t.outlineWidth = 0.3f;
-                t.outlineColor = Color.black;
-            }
-        BuildHelpPanel();
-        Select(playButton);
+        // Keep the serialized menu component, but replace the old tiny scene UI.
+        Canvas legacy = GetComponentInParent<Canvas>();
+        foreach (Graphic graphic in legacy.GetComponentsInChildren<Graphic>(true)) graphic.enabled = false;
+        foreach (Button button in legacy.GetComponentsInChildren<Button>(true)) button.interactable = false;
+
+        Canvas canvas = MiniUI.MakeCanvas("CuteMainMenu");
+        canvas.sortingOrder = 30;
+        Transform safe = SafeArea.Create(canvas.transform);
+        Transform card = CuteTheme.Card(safe, Vector2.one * 0.5f, Vector2.zero, new Vector2(480, 610)).transform;
+        Label(card, "Fanh Fight", 62, new Vector2(0, 220));
+        Label(card, "SMALL FOREST. BIG ADVENTURE.", 16, new Vector2(0, 166));
+        Decoration(card, CuteArt.Flower, new Vector2(-190, 228), new Vector2(36, 42));
+        Decoration(card, CuteArt.Flower, new Vector2(190, 228), new Vector2(36, 42));
+
+        playButton = ActionButton(card, "Adventure", 85, PlayGame, true);
+        Button smash = ActionButton(card, "Slipper Smash", 10, () => SceneManager.LoadScene("MiniSmash"));
+        Button garden = ActionButton(card, "Flower Garden", -65, () => SceneManager.LoadScene("MiniSpray"));
+        helpButton = ActionButton(card, "How to Play", -140, HowToPlay);
+        Button quit = MiniUI.MakeButton(card, "Quit", Vector2.one * 0.5f, new Vector2(0, -225), new Vector2(150, 42), Quit);
+        menuButtons = new[] { playButton, smash, garden, helpButton, quit };
+        MiniUI.Select(playButton);
     }
 
     void Update()
     {
-        // nền rừng trôi chậm phía sau menu
-        if (Camera.main != null)
-            Camera.main.transform.position += new Vector3(Time.deltaTime * 1.5f, 0, 0);
-        if (helpPanel != null && helpPanel.activeSelf && GameInput.Pause.WasPressedThisFrame())
-            CloseHelp();
+        if (modal != null && GameInput.Pause.WasPressedThisFrame()) CloseModal();
     }
 
-    Button CloneButton(Button source, string label, UnityEngine.Events.UnityAction onClick)
+    static TextMeshProUGUI Label(Transform parent, string value, int size, Vector2 position)
     {
-        Button b = Instantiate(source, source.transform.parent);
-        b.name = label;
-        b.onClick = new Button.ButtonClickedEvent();
-        b.onClick.AddListener(onClick);
-        b.GetComponentInChildren<TMP_Text>().text = label;
+        TextMeshProUGUI text = MiniUI.MakeText(parent, value, size, Vector2.one * 0.5f, position);
+        CuteTheme.Text(text, size);
+        text.rectTransform.sizeDelta = new Vector2(540, size * 1.8f);
+        return text;
+    }
+
+    static void Decoration(Transform parent, Sprite sprite, Vector2 position, Vector2 size)
+    {
+        GameObject go = new GameObject("FlowerDetail");
+        go.transform.SetParent(parent, false);
+        Image image = go.AddComponent<Image>();
+        image.sprite = sprite;
+        image.raycastTarget = false;
+        image.rectTransform.anchoredPosition = position;
+        image.rectTransform.sizeDelta = size;
+    }
+
+    static Button ActionButton(Transform parent, string label, float y, System.Action action, bool primary = false)
+    {
+        Button b = MiniUI.MakeButton(parent, label, Vector2.one * 0.5f, new Vector2(0, y), new Vector2(340, 62), action);
+        CuteTheme.Button(b, primary);
         return b;
+    }
+
+    Transform OpenModal(string name, Button origin)
+    {
+        foreach (Button b in menuButtons) b.interactable = false;
+        returnFocus = origin;
+        Canvas canvas = MiniUI.MakeCanvas(name);
+        canvas.sortingOrder = 80;
+        modal = canvas.gameObject;
+        MiniUI.Panel(canvas.transform, new Color(0.12f, 0.28f, 0.23f, 0.38f));
+        Transform safe = SafeArea.Create(canvas.transform);
+        return CuteTheme.Card(safe, Vector2.one * 0.5f, Vector2.zero, new Vector2(600, 610)).transform;
     }
 
     public void PlayGame()
     {
-        SceneManager.LoadScene(1); // Scene 1 là màn đầu tiên, index 0 là menu
+        if (modal != null) return;
+        Transform card = OpenModal("LevelSelect", playButton);
+        Label(card, "Choose an adventure", 32, new Vector2(0, 240));
+        Label(card, "Complete a level to unlock the next", 18, new Vector2(0, 193));
+        Button selected = null;
+        for (int i = 1; i <= AdventureProgress.Count; i++)
+        {
+            int level = i;
+            bool unlocked = level <= AdventureProgress.Unlocked;
+            string status = !unlocked ? "Locked" : AdventureProgress.IsCompleted(level)
+                ? "Completed - Best: " + AdventureProgress.BestScore(level) : "Ready to explore";
+            Button b = MiniUI.MakeButton(card, level + ". " + AdventureProgress.Titles[level - 1] + "\n" + status,
+                Vector2.one * 0.5f, new Vector2(0, 105 - (i - 1) * 105), new Vector2(500, 86),
+                () => AdventureProgress.StartLevel(level));
+            b.GetComponentInChildren<TMP_Text>().fontSize = 25;
+            b.interactable = unlocked;
+            if (unlocked) selected = b;
+        }
+        ActionButton(card, "Back", -230, CloseModal);
+        MiniUI.Select(selected);
     }
-    public void Quit()
-    {
-        Application.Quit();
-    }
+
     public void HowToPlay()
     {
-        helpPanel.SetActive(true);
-        Select(helpPanel.GetComponentInChildren<Button>());
+        if (modal != null) return;
+        Transform card = OpenModal("HelpPanel", helpButton);
+        Label(card, "Ready for adventure?", 36, new Vector2(0, 240));
+        TextMeshProUGUI help = Label(card,
+            "Move: A / D or Left / Right arrows\nDouble jump: W / Up (press twice)\n"
+            + "Spray: Space / J    |    Enter door: E\nDrop down: S    |    Pause: Esc\n"
+            + "Controller: A Jump, X Spray, Y Enter\nStart: Pause",
+            20, new Vector2(0, 100));
+        help.rectTransform.sizeDelta = new Vector2(540, 190);
+        musicText = Label(card, "", 22, new Vector2(0, -65));
+        sfxText = Label(card, "", 22, new Vector2(0, -130));
+        VolumeButtons(card, -65, delta => { Fx.MusicVolume += delta; RefreshVolume(); });
+        VolumeButtons(card, -130, delta => { Fx.SfxVolume += delta; Fx.Coin(); RefreshVolume(); });
+        Button close = ActionButton(card, "Back", -230, CloseModal);
+        RefreshVolume();
+        MiniUI.Select(close);
     }
-    void CloseHelp()
+
+    static void VolumeButtons(Transform parent, float y, System.Action<float> change)
     {
-        helpPanel.SetActive(false);
-        Select(helpButton);
+        MiniUI.MakeButton(parent, "-", Vector2.one * 0.5f, new Vector2(-215, y), new Vector2(50, 44), () => change(-0.1f));
+        MiniUI.MakeButton(parent, "+", Vector2.one * 0.5f, new Vector2(215, y), new Vector2(50, 44), () => change(0.1f));
     }
 
-    static void Select(Component c)
+    void RefreshVolume()
     {
-        if (c != null && EventSystem.current != null)
-            EventSystem.current.SetSelectedGameObject(c.gameObject);
+        musicText.text = "Music: " + Mathf.RoundToInt(Fx.MusicVolume * 100) + "%";
+        sfxText.text = "Sound effects: " + Mathf.RoundToInt(Fx.SfxVolume * 100) + "%";
     }
 
-    // bảng hướng dẫn phím + chỉnh âm lượng
-    void BuildHelpPanel()
+    void CloseModal()
     {
-        Canvas canvas = GetComponentInParent<Canvas>();
-        helpPanel = new GameObject("HelpPanel");
-        helpPanel.transform.SetParent(canvas.transform, false);
-        Image bg = helpPanel.AddComponent<Image>();
-        bg.color = new Color(0.05f, 0.06f, 0.1f, 0.92f);
-        RectTransform rt = bg.rectTransform;
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.offsetMin = rt.offsetMax = Vector2.zero;
-
-        TMP_FontAsset font = playButton.GetComponentInChildren<TMP_Text>().font;
-        Label("Huong dan", 40, new Vector2(0, 0.85f), font);
-        Label("Di chuyen:  <- ->  hoac  A D\n" +
-              "Nhay:  ^  hoac  W   (bam 2 lan de nhay doi)\n" +
-              "Xit thuoc diet gian:  Space  hoac  J\n" +
-              "Vao cua:  E      Xuong platform:  v  hoac  S\n" +
-              "Tam dung:  Esc\n" +
-              "Tay cam:  A nhay - X xit - Y vao cua - Start tam dung",
-              22, new Vector2(0, 0.58f), font);
-
-        musicText = Label("", 24, new Vector2(0, 0.33f), font);
-        VolumeButtons(new Vector2(0, 0.33f), v => { Fx.MusicVolume += v; Refresh(); }, font);
-        sfxText = Label("", 24, new Vector2(0, 0.24f), font);
-        VolumeButtons(new Vector2(0, 0.24f), v => { Fx.SfxVolume += v; Fx.Coin(); Refresh(); }, font);
-
-        Button close = MakeButton("Dong", new Vector2(0.5f, 0.1f), new Vector2(200, 50), font);
-        close.onClick.AddListener(CloseHelp);
-        Refresh();
-        helpPanel.SetActive(false);
+        Destroy(modal);
+        modal = null;
+        foreach (Button b in menuButtons) b.interactable = true;
+        MiniUI.Select(returnFocus);
     }
 
-    void Refresh()
-    {
-        musicText.text = "Nhac nen: " + Mathf.RoundToInt(Fx.MusicVolume * 100) + "%";
-        sfxText.text = "Hieu ung: " + Mathf.RoundToInt(Fx.SfxVolume * 100) + "%";
-    }
-
-    TextMeshProUGUI Label(string s, int size, Vector2 anchorY, TMP_FontAsset font)
-    {
-        GameObject go = new GameObject("Label");
-        go.transform.SetParent(helpPanel.transform, false);
-        TextMeshProUGUI t = go.AddComponent<TextMeshProUGUI>();
-        t.font = font;
-        t.text = s;
-        t.fontSize = size;
-        t.alignment = TextAlignmentOptions.Center;
-        t.color = Color.white;
-        t.raycastTarget = false;
-        RectTransform rt = t.rectTransform;
-        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, anchorY.y);
-        rt.sizeDelta = new Vector2(900, size * 8);
-        return t;
-    }
-
-    void VolumeButtons(Vector2 anchorY, System.Action<float> change, TMP_FontAsset font)
-    {
-        MakeButton("-", new Vector2(0.33f, anchorY.y), new Vector2(50, 40), font).onClick.AddListener(() => change(-0.1f));
-        MakeButton("+", new Vector2(0.67f, anchorY.y), new Vector2(50, 40), font).onClick.AddListener(() => change(0.1f));
-    }
-
-    // nút mới theo kiểu nút Play có sẵn
-    Button MakeButton(string label, Vector2 anchor, Vector2 size, TMP_FontAsset font)
-    {
-        Button b = Instantiate(playButton, helpPanel.transform);
-        b.name = label;
-        b.onClick = new Button.ButtonClickedEvent();
-        b.GetComponentInChildren<TMP_Text>().text = label;
-        RectTransform rt = (RectTransform)b.transform;
-        rt.anchorMin = rt.anchorMax = anchor;
-        rt.anchoredPosition = Vector2.zero;
-        rt.sizeDelta = size;
-        return b;
-    }
+    public void Quit() { Application.Quit(); }
 }

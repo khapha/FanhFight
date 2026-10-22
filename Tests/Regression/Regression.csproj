@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="UnityStubs.cs" />
+    <Compile Include="../../Assets/Script/GameSession.cs" Link="GameSession.cs" />
+    <Compile Include="../../Assets/Script/AdventureProgress.cs" Link="AdventureProgress.cs" />
+    <Compile Include="../../Assets/Script/MiniGames/GardenSave.cs" Link="GardenSave.cs" />
+    <Compile Include="../../Assets/Script/TouchHoldButton.cs" Link="TouchHoldButton.cs" />
+    <Compile Include="../../Assets/Script/PlayerAttack.cs" Link="PlayerAttack.cs" />
+    <Reference Include="Microsoft.CodeAnalysis">
+      <HintPath>$(MSBuildSDKsPath)/../Roslyn/bincore/Microsoft.CodeAnalysis.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp">
+      <HintPath>$(MSBuildSDKsPath)/../Roslyn/bincore/Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
