@@ -173,7 +173,26 @@ public class Player : MonoBehaviour
         dead = true;
         gm.SaveHighscore();
         if (sr != null) sr.enabled = true;
-        GameOverUI.Show("GAME OVER", gm.points, gm.highscore);
+        Checkpoint.Lives--;
+        if (Checkpoint.Lives > 0)
+            StartCoroutine(Respawn());
+        else
+            GameOverUI.Show("GAME OVER", gm.points, gm.highscore);
+    }
+
+    // còn mạng thì hồi sinh ở checkpoint gần nhất, đầy máu
+    IEnumerator Respawn()
+    {
+        r2.linearVelocity = Vector2.zero;
+        Fx.Burst(transform.position, Color.white, 20, 3f, 0.2f);
+        if (sr != null) sr.enabled = false;
+        yield return new WaitForSeconds(0.8f);
+        transform.position = Checkpoint.SpawnPoint;
+        r2.linearVelocity = Vector2.zero;
+        ourHealth = maxhealth;
+        dead = false;
+        invincibleTimer = invincibleTime * 1.5f;
+        if (sr != null) sr.enabled = true;
     }
 
 
@@ -203,6 +222,7 @@ public class Player : MonoBehaviour
             sound.Playsound("coins");
             Destroy(collision.gameObject);
             gm.points += 1;
+            Fx.Popup(collision.transform.position, "+1", new Color(1f, 0.9f, 0.2f));
 
         }
         if (collision.CompareTag("heart"))

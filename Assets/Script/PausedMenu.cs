@@ -9,6 +9,7 @@ public class PausedMenu : MonoBehaviour
 {
     public GameObject pauseUI;
     public bool pause = false;
+    private bool wasPaused = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,15 +33,12 @@ public class PausedMenu : MonoBehaviour
             }
             if (!pause) ClearSelection();
         }
-        if (pause)
+        // chỉ đổi timeScale khi vừa bật/tắt pause, để không phá hiệu ứng khựng hình
+        if (pause != wasPaused)
         {
-            pauseUI.SetActive(true);
-            Time.timeScale = 0;
-        }
-        if(pause == false)
-        {
-            pauseUI.SetActive(false);
-            Time.timeScale = 1;
+            pauseUI.SetActive(pause);
+            Time.timeScale = pause ? 0 : 1;
+            wasPaused = pause;
         }
         
     }

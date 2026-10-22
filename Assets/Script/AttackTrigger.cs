@@ -10,6 +10,7 @@ public class AttackTrigger : MonoBehaviour
         if(collision.isTrigger != true && collision.CompareTag("Enemy"))
         {
             collision.SendMessageUpwards("Damage", dmg);
+            Fx.HitStop();
         }
         
     }

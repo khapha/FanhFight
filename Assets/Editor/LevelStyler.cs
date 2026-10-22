@@ -41,6 +41,57 @@ public static class LevelStyler
         FixBackgroundColor();
     }
 
+    // menu: thêm camera có nền rừng; platform di động/sụt: đổi sang gạch cỏ cho đồng bộ
+    public static void StyleMenuAndPlatforms()
+    {
+        Sprite grass = AssetDatabase.LoadAssetAtPath<Sprite>(Grass);
+        Sprite[] layers = AssetDatabase.FindAssets("t:Texture2D", new[] { Forest })
+            .Select(AssetDatabase.GUIDToAssetPath).OrderByDescending(p => p)
+            .Select(p => AssetDatabase.LoadAssetAtPath<Sprite>(p)).ToArray();
+
+        Scene menu = EditorSceneManager.OpenScene("Assets/Scenes/Scene 3.unity");
+        if (Camera.main == null)
+        {
+            GameObject camGo = new GameObject("Main Camera");
+            camGo.tag = "MainCamera";
+            camGo.transform.position = new Vector3(0, 0, -10);
+            Camera cam = camGo.AddComponent<Camera>();
+            cam.orthographic = true;
+            cam.orthographicSize = 7.7f;
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0.09f, 0.1f, 0.14f);
+            camGo.AddComponent<AudioListener>();
+            ParallaxBackground pb = camGo.AddComponent<ParallaxBackground>();
+            pb.layers = layers;
+        }
+        // tấm nền tối che hết màn hình: làm trong để thấy rừng phía sau
+        foreach (UnityEngine.UI.Image img in Object.FindObjectsByType<UnityEngine.UI.Image>(FindObjectsSortMode.None))
+            if (img.name == "Panel")
+                img.color = new Color(0, 0, 0, 0.35f);
+        EditorSceneManager.SaveScene(menu);
+
+        foreach (string path in new[] { "Assets/Scenes/Scene 1.unity", "Assets/Scenes/Scene 2.unity", "Assets/Scenes/Scene 4.unity" })
+        {
+            Scene scene = EditorSceneManager.OpenScene(path);
+            int n = 0;
+            foreach (SpriteRenderer sr in Object.FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None))
+            {
+                bool falling = sr.GetComponent<FallingPlat>() != null;
+                bool moving = sr.GetComponent<MovingPlat>() != null;
+                if (!falling && !moving) continue;
+                Vector2 size = sr.drawMode == SpriteDrawMode.Simple ? (Vector2)sr.sprite.bounds.size : sr.size;
+                sr.sprite = grass;
+                sr.drawMode = SpriteDrawMode.Tiled;
+                sr.size = size;
+                // platform sụt hơi cam để người chơi biết nó sẽ rơi
+                sr.color = falling ? new Color(1f, 0.75f, 0.55f) : Color.white;
+                n++;
+            }
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log("LevelStyler: " + path + " restyled " + n + " platforms");
+        }
+    }
+
     // làm đẹp lại riêng màn 2 (sau khi dựng lại bố cục)
     public static void StyleLevel2()
     {

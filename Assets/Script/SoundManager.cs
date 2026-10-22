@@ -23,15 +23,15 @@ public class SoundManager : MonoBehaviour
         {
             case "coins":
                 adirs.clip = coins;
-                adirs.PlayOneShot(coins, 0.6f);
+                adirs.PlayOneShot(coins, 0.6f * Fx.SfxVolume);
                 break;
             case "destroy":
                 adirs.clip = destroy;
-                adirs.PlayOneShot(destroy, 1f);
+                adirs.PlayOneShot(destroy, 1f * Fx.SfxVolume);
                 break;
             case "sword":
                 adirs.clip = sword;
-                adirs.PlayOneShot(sword, 1f);
+                adirs.PlayOneShot(sword, 1f * Fx.SfxVolume);
                 break;
         }    
     }

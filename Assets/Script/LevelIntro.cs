@@ -14,7 +14,7 @@ public class LevelIntro : MonoBehaviour
         SceneManager.sceneLoaded += (scene, mode) =>
         {
             // index 0 là menu, các màn bắt đầu từ 1
-            int level = scene.buildIndex;
+            int level = GameHUD.LevelNumber(scene.name);
             if (level < 1 || level > Titles.Length) return;
             GameObject go = new GameObject("LevelIntro");
             go.AddComponent<LevelIntro>().Show("Man " + level + "/" + Titles.Length, Titles[level - 1]);

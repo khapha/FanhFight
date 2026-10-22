@@ -33,7 +33,7 @@ public class PlayerAttack : MonoBehaviour
             attacking = true;
             trigger.enabled = true;
             acttackdelay = 0.3f;
-            sound.Playsound("sword");
+            Fx.Spray(transform.position, transform.localScale.x > 0);
 
         }
         if (attacking)

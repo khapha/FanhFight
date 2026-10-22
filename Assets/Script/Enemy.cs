@@ -100,6 +100,9 @@ public class Enemy : MonoBehaviour
         }
         if (collision.CompareTag("actacktrigger"))
         {
+            Fx.HitStop();
+            Fx.Popup(transform.position, "+5", new Color(1f, 0.6f, 0.3f));
+            if (player != null && player.gm != null) player.gm.points += 5;
             Fx.Burst(transform.position, new Color(0.5f, 0.3f, 0.2f), 15, 3f, 0.2f);
             Destroy(gameObject);
         }

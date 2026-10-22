@@ -32,6 +32,8 @@ public class TurretAI : MonoBehaviour
     void Start()
     {
         sound = GameObject.FindGameObjectWithTag("Sounds").GetComponent<SoundManager>();
+        // tháp pháo nhân bản từ màn khác sẽ mất tham chiếu tới người chơi
+        if (target == null) target = GameObject.FindGameObjectWithTag("Player").transform;
 
     }
     public void Flip()
