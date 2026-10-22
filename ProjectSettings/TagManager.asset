@@ -18,6 +18,7 @@ TagManager:
   - shoes
   - heart
   - Movingplat
+  - ground
   layers:
   - Default
   - TransparentFX

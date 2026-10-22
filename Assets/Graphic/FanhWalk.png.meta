@@ -1,0 +1,480 @@
+fileFormatVersion: 2
+guid: 42d64cf6752d41b40b690dbd1fae623f
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7856817306056146882
+    second: FanhWalk_0
+  - first:
+      213: 243712197208536085
+    second: FanhWalk_1
+  - first:
+      213: -4774757086460609898
+    second: FanhWalk_2
+  - first:
+      213: -2521832054312953572
+    second: FanhWalk_3
+  - first:
+      213: -4579214074503214418
+    second: FanhWalk_4
+  - first:
+      213: 498086083983142909
+    second: FanhWalk_5
+  - first:
+      213: -3313098708983564721
+    second: FanhWalk_6
+  - first:
+      213: -1645853118703479789
+    second: FanhWalk_7
+  - first:
+      213: -4858935907952833101
+    second: FanhWalk_8
+  - first:
+      213: 4861182446638133579
+    second: FanhWalk_9
+  - first:
+      213: 7435278718787218
+    second: FanhWalk_10
+  - first:
+      213: -8793958930596611
+    second: FanhWalk_11
+  - first:
+      213: 5720397182557802946
+    second: FanhWalk_0
+  - first:
+      213: -6085001905471719915
+    second: FanhWalk_1
+  - first:
+      213: 3508318693987023534
+    second: FanhWalk_2
+  - first:
+      213: -3306939691482309983
+    second: FanhWalk_3
+  - first:
+      213: 6118122868119898904
+    second: FanhWalk_4
+  - first:
+      213: -611837924225879957
+    second: FanhWalk_5
+  - first:
+      213: -6966242851923661630
+    second: FanhWalk_6
+  - first:
+      213: -3012972474208961986
+    second: FanhWalk_7
+  - first:
+      213: 7416318345693399597
+    second: FanhWalk_8
+  - first:
+      213: 1135405091211905373
+    second: FanhWalk_9
+  - first:
+      213: -5096048322398956772
+    second: FanhWalk_10
+  - first:
+      213: -8672210170242777265
+    second: FanhWalk_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 10
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: FanhWalk_0
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 336
+        width: 41
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c1d088fdeee26f40800000000000000
+      internalID: -7856817306056146882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_1
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 336
+        width: 41
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51678c6b10bbd8ba0800000000000000
+      internalID: 243712197208536085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_2
+      rect:
+        serializedVersion: 2
+        x: 244
+        y: 336
+        width: 41
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eaa75f9a34d00b030800000000000000
+      internalID: -4774757086460609898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_3
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 288
+        width: 32
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1aa9e8b1fd36b12d0800000000000000
+      internalID: -2521832054312953572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_4
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 288
+        width: 32
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81b0b765550f7e450800000000000000
+      internalID: -4579214074503214418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_5
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 288
+        width: 32
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b60776a46a05287f0800000000000000
+      internalID: 498086083983142909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_6
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 240
+        width: 32
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2cc6cffe80fe25f90800000000000000
+      internalID: -3313098708983564721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_7
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 240
+        width: 32
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3abeb48f75cf26d0800000000000000
+      internalID: -1645853118703479789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_8
+      rect:
+        serializedVersion: 2
+        x: 245
+        y: 240
+        width: 32
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2a8448fd3e0ce660800000000000000
+      internalID: -4858935907952833101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_9
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 192
+        width: 41
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d590bd13ae4c1cf00800000000000000
+      internalID: 4861182446638133579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_10
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 192
+        width: 41
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c135f210d033749b0800000000000000
+      internalID: 7435278718787218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhWalk_11
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 192
+        width: 41
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4f36292cce16a780800000000000000
+      internalID: -8793958930596611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      FanhWalk_0: -7856817306056146882
+      FanhWalk_1: 243712197208536085
+      FanhWalk_10: 7435278718787218
+      FanhWalk_11: -8793958930596611
+      FanhWalk_2: -4774757086460609898
+      FanhWalk_3: -2521832054312953572
+      FanhWalk_4: -4579214074503214418
+      FanhWalk_5: 498086083983142909
+      FanhWalk_6: -3313098708983564721
+      FanhWalk_7: -1645853118703479789
+      FanhWalk_8: -4858935907952833101
+      FanhWalk_9: 4861182446638133579
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

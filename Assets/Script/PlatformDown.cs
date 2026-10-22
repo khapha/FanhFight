@@ -8,7 +8,7 @@ public class PlatformDown : MonoBehaviour
     {
         if (collision.collider.CompareTag("Player"))
         {
-            if (Input.GetKeyDown(KeyCode.DownArrow))
+            if (GameInput.Down.IsPressed())
             {
                 gameObject.GetComponent<Collider2D>().enabled = false;
             }

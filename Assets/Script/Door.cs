@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class Door : MonoBehaviour
 {
-    public int Levelload = 1;
     public GameMaster gm;
+    private bool playerInside = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,33 +16,38 @@ public class Door : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (playerInside && GameInput.Interact.WasPressedThisFrame())
+            EnterDoor();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
             savescore();
-            gm.InputText.text = ("Press E to enter");
+            gm.InputText.text = ("Press E / Y to enter");
         }
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-       
         if (collision.CompareTag("Player"))
-        {
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                savescore();
-                SceneManager.LoadScene(Levelload);
-            }
-            
-        }
+            playerInside = true;
+    }
+    void EnterDoor()
+    {
+        savescore();
+        gm.SaveHighscore();
+        // sang màn kế tiếp trong Build Settings, hết màn thì thắng
+        int next = SceneManager.GetActiveScene().buildIndex + 1;
+        if (next < SceneManager.sceneCountInBuildSettings)
+            SceneManager.LoadScene(next);
+        else
+            GameOverUI.Show("YOU WIN!", gm.points, gm.highscore);
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
+            playerInside = false;
             gm.InputText.text = ("");
         }
     }

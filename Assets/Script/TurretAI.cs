@@ -37,10 +37,6 @@ public class TurretAI : MonoBehaviour
     public void Flip()
     {
         enemyfaceright = !enemyfaceright;
-        Vector2 Scale;
-        Scale = bullet.transform.localScale;
-        Scale.x *= -1;
-        bullet.transform.localScale = Scale;
     }
     // Update is called once per frame
     private void FixedUpdate()
@@ -71,9 +67,11 @@ public class TurretAI : MonoBehaviour
         {
             lookingRight = false;
         }
-        if (curlHealth < 0)
+        if (curlHealth <= 0)
         {
             sound.Playsound("destroy");
+            Fx.Burst(transform.position, new Color(1f, 0.6f, 0.2f), 30, 5f, 0.3f);
+            CameraRig.Shake(2f);
             Destroy(gameObject);
         }
     }
@@ -95,20 +93,39 @@ public class TurretAI : MonoBehaviour
         bullettimer += Time.deltaTime;
         if (bullettimer >= shootinterval)
         {
-            Vector2 direction = target.transform.position - transform.position;
-            direction.Normalize();
+            // bắn đón đầu: nhắm vào chỗ player sẽ tới khi đạn bay đến
+            Vector2 aim = target.transform.position;
+            Rigidbody2D trb = target.GetComponent<Rigidbody2D>();
+            if (trb != null)
+            {
+                float t = Vector2.Distance(transform.position, aim) / Mathf.Max(bulletspeed, 0.1f);
+                aim += trb.linearVelocity * Mathf.Min(t, 1f);
+            }
+            Vector2 direction = (aim - (Vector2)transform.position).normalized;
             if (attactright)
             {
                 GameObject bulletclone;
                 bulletclone = Instantiate(bullet, shootpointR.transform.position, shootpointR.transform.rotation) as GameObject;
-                bulletclone.GetComponent<Rigidbody2D>().velocity = direction * bulletspeed;
+                if (!enemyfaceright)
+                {
+                    Vector3 s = bulletclone.transform.localScale;
+                    s.x *= -1;
+                    bulletclone.transform.localScale = s;
+                }
+                bulletclone.GetComponent<Rigidbody2D>().linearVelocity = direction * bulletspeed;
                 bullettimer = 0;
             }
             if (!attactright)
             {
                 GameObject bulletclone;
                 bulletclone = Instantiate(bullet, shootpointL.transform.position, shootpointL.transform.rotation) as GameObject;
-                bulletclone.GetComponent<Rigidbody2D>().velocity = direction * bulletspeed;
+                if (!enemyfaceright)
+                {
+                    Vector3 s = bulletclone.transform.localScale;
+                    s.x *= -1;
+                    bulletclone.transform.localScale = s;
+                }
+                bulletclone.GetComponent<Rigidbody2D>().linearVelocity = direction * bulletspeed;
                 bullettimer = 0;
             }
         }

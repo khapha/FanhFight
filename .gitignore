@@ -338,3 +338,31 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+## Unity
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/TestBuild/
+/*.log
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+crashlytics-build.properties
+# Unity cần các file .meta (mẫu Visual Studio phía trên lại bỏ qua chúng)
+!/Assets/**/*.meta
+!/Assets/*.meta
+!/Packages/**/*.meta
+# file do Unity/IDE tự sinh
+*.csproj
+*.sln
+.vscode/
+.vs/
+*.slnx
+# Unity cần Packages/manifest.json và packages-lock.json
+!/Packages/manifest.json
+!/Packages/packages-lock.json

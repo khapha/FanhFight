@@ -1,0 +1,335 @@
+fileFormatVersion: 2
+guid: 05549057bc3009b438384458a71b68a9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 56807760288023708
+    second: 82741042-vector-pixel-art-set-cockroach-isolated_0
+  - first:
+      213: -1535562019132350086
+    second: 82741042-vector-pixel-art-set-cockroach-isolated_1
+  - first:
+      213: -795834265087460745
+    second: 82741042-vector-pixel-art-set-cockroach-isolated_2
+  - first:
+      213: -2847820017597910291
+    second: 82741042-vector-pixel-art-set-cockroach-isolated_3
+  - first:
+      213: -256502360805788841
+    second: 82741042-vector-pixel-art-set-cockroach-isolated_4
+  - first:
+      213: -5229031153160439615
+    second: 82741042-vector-pixel-art-set-cockroach-isolated_5
+  - first:
+      213: 4558046237263979784
+    second: 82741042-vector-pixel-art-set-cockroach-isolated_6
+  - first:
+      213: 4284898323806466830
+    second: 82741042-vector-pixel-art-set-cockroach-isolated 1_0
+  - first:
+      213: -8079046585952366451
+    second: 82741042-vector-pixel-art-set-cockroach-isolated 1_1
+  - first:
+      213: -8487816647510017356
+    second: 82741042-vector-pixel-art-set-cockroach-isolated 1_2
+  - first:
+      213: 1256368495832634986
+    second: 82741042-vector-pixel-art-set-cockroach-isolated 1_3
+  - first:
+      213: 3455787636279506233
+    second: 82741042-vector-pixel-art-set-cockroach-isolated 1_4
+  - first:
+      213: -1371587442291565573
+    second: 82741042-vector-pixel-art-set-cockroach-isolated 1_5
+  - first:
+      213: 3384139039419842652
+    second: 82741042-vector-pixel-art-set-cockroach-isolated 1_6
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 150
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: 82741042-vector-pixel-art-set-cockroach-isolated 1_0
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 793
+        width: 624
+        height: 390
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e03b629b254077b30800000000000000
+      internalID: 4284898323806466830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 82741042-vector-pixel-art-set-cockroach-isolated 1_1
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 715
+        width: 624
+        height: 546
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d801a784fe571ef80800000000000000
+      internalID: -8079046585952366451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 82741042-vector-pixel-art-set-cockroach-isolated 1_2
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 507
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4bab48ebab7353a80800000000000000
+      internalID: -8487816647510017356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 82741042-vector-pixel-art-set-cockroach-isolated 1_3
+      rect:
+        serializedVersion: 2
+        x: 676
+        y: 26
+        width: 611
+        height: 585
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a66981d8d748f6110800000000000000
+      internalID: 1256368495832634986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 82741042-vector-pixel-art-set-cockroach-isolated 1_4
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 481
+        width: 13
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 93570afab8c65ff20800000000000000
+      internalID: 3455787636279506233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 82741042-vector-pixel-art-set-cockroach-isolated 1_5
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 104
+        width: 624
+        height: 377
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bfb13dbfc7427fce0800000000000000
+      internalID: -1371587442291565573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 82741042-vector-pixel-art-set-cockroach-isolated 1_6
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 286
+        width: 26
+        height: 117
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c50c623c680e6fe20800000000000000
+      internalID: 3384139039419842652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      82741042-vector-pixel-art-set-cockroach-isolated 1_0: 4284898323806466830
+      82741042-vector-pixel-art-set-cockroach-isolated 1_1: -8079046585952366451
+      82741042-vector-pixel-art-set-cockroach-isolated 1_2: -8487816647510017356
+      82741042-vector-pixel-art-set-cockroach-isolated 1_3: 1256368495832634986
+      82741042-vector-pixel-art-set-cockroach-isolated 1_4: 3455787636279506233
+      82741042-vector-pixel-art-set-cockroach-isolated 1_5: -1371587442291565573
+      82741042-vector-pixel-art-set-cockroach-isolated 1_6: 3384139039419842652
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

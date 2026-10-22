@@ -1,0 +1,1536 @@
+fileFormatVersion: 2
+guid: a618c3fa5d55f76479de5cc5882790fb
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5980491373123216849
+    second: FanhBatRight_0
+  - first:
+      213: -786227483908685225
+    second: FanhBatRight_1
+  - first:
+      213: 8010427731747150935
+    second: FanhBatRight_2
+  - first:
+      213: 6165177767256275679
+    second: FanhBatRight_3
+  - first:
+      213: -8566735316120477559
+    second: FanhBatRight_4
+  - first:
+      213: 5477027350127210455
+    second: FanhBatRight_5
+  - first:
+      213: -7976165535859198917
+    second: FanhBatRight_6
+  - first:
+      213: 7143840489753329710
+    second: FanhBatRight_7
+  - first:
+      213: 725437434520516870
+    second: FanhBatRight_8
+  - first:
+      213: 415936009632508166
+    second: FanhBatRight_9
+  - first:
+      213: 3704978630825812723
+    second: FanhBatRight_10
+  - first:
+      213: 6194599590932237539
+    second: FanhBatRight_11
+  - first:
+      213: -1202371350888884956
+    second: FanhBatRight_12
+  - first:
+      213: -4787544986633331625
+    second: FanhBatRight_13
+  - first:
+      213: -6122212214881507724
+    second: FanhBatRight_14
+  - first:
+      213: -4969807634465805189
+    second: FanhBatRight_15
+  - first:
+      213: 3612203272962544477
+    second: FanhBatRight_16
+  - first:
+      213: 2423271710619249948
+    second: FanhBatRight_17
+  - first:
+      213: 4462870069739582592
+    second: FanhBatRight_18
+  - first:
+      213: -8012552248634666962
+    second: FanhBatRight_19
+  - first:
+      213: 1389308038875353970
+    second: FanhBatRight_20
+  - first:
+      213: 807544356512505710
+    second: FanhBatRight_21
+  - first:
+      213: -7399902573162473203
+    second: FanhBatRight_22
+  - first:
+      213: 561480217610664913
+    second: FanhBatRight_23
+  - first:
+      213: -2191965050983450428
+    second: FanhBatRight_24
+  - first:
+      213: -4322282031941863516
+    second: FanhBatRight_25
+  - first:
+      213: -2417958662841178543
+    second: FanhBatRight_26
+  - first:
+      213: -7129010354839427888
+    second: FanhBatRight_27
+  - first:
+      213: 5912789001499487645
+    second: FanhBatRight_28
+  - first:
+      213: -6823054594384020348
+    second: FanhBatRight_29
+  - first:
+      213: 8410780084774376321
+    second: FanhBatRight_30
+  - first:
+      213: 6170024981412072165
+    second: FanhBatRight_31
+  - first:
+      213: -530807456207096789
+    second: FanhBatRight_32
+  - first:
+      213: -3501930480016470787
+    second: FanhBatRight_33
+  - first:
+      213: -156388294900074885
+    second: FanhBatRight_34
+  - first:
+      213: -4595921177496243377
+    second: FanhBatRight_35
+  - first:
+      213: -7792254433984539404
+    second: FanhBatRight_36
+  - first:
+      213: 5535751325049957250
+    second: FanhBatRight_37
+  - first:
+      213: -7745570945460098009
+    second: FanhBatRight_38
+  - first:
+      213: -3141878215647385504
+    second: FanhBatRight_39
+  - first:
+      213: -2182654346664401532
+    second: FanhBatRight_40
+  - first:
+      213: 6927637609931071058
+    second: FanhBatRight_41
+  - first:
+      213: 8687467770538783656
+    second: FanhBatRight_42
+  - first:
+      213: -2457073152570138466
+    second: FanhBatRight_43
+  - first:
+      213: 4209436237655531229
+    second: FanhBatRight_44
+  - first:
+      213: 9021180880365321065
+    second: FanhBatRight_45
+  - first:
+      213: 3864615503460573453
+    second: FanhBatRight_46
+  - first:
+      213: 1462320956410027654
+    second: FanhBatRight_47
+  - first:
+      213: 6031953476035989142
+    second: FanhBatRight_48
+  - first:
+      213: 3084665675636229695
+    second: FanhBatRight_49
+  - first:
+      213: -7170647443483391761
+    second: FanhBatRight_50
+  - first:
+      213: 131410006055833371
+    second: FanhBatRight_51
+  - first:
+      213: -8661504864336887555
+    second: FanhBatRight_52
+  - first:
+      213: 1669472664365919662
+    second: FanhBatRight_53
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 19
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: FanhBatRight_0
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 320
+        width: 42
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d52c45c739fef250800000000000000
+      internalID: 5980491373123216849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_1
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 320
+        width: 42
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75249fcd442c615f0800000000000000
+      internalID: -786227483908685225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_2
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 320
+        width: 42
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75c1ab9b491ca2f60800000000000000
+      internalID: 8010427731747150935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_3
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 320
+        width: 47
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fda327ac38c1f8550800000000000000
+      internalID: 6165177767256275679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_4
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 320
+        width: 47
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98068d55e97dc1980800000000000000
+      internalID: -8566735316120477559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_5
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 320
+        width: 43
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7df6e6d3b5f420c40800000000000000
+      internalID: 5477027350127210455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_6
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 320
+        width: 41
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b34366564b7fe4190800000000000000
+      internalID: -7976165535859198917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_7
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 320
+        width: 41
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e20ccc36315042360800000000000000
+      internalID: 7143840489753329710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_8
+      rect:
+        serializedVersion: 2
+        x: 522
+        y: 320
+        width: 40
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 609bd5fc085411a00800000000000000
+      internalID: 725437434520516870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_9
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 256
+        width: 46
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6096077d893b5c500800000000000000
+      internalID: 415936009632508166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_10
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 256
+        width: 46
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f229c65f6aba6330800000000000000
+      internalID: 3704978630825812723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_11
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 256
+        width: 44
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3eccb4fe183a7f550800000000000000
+      internalID: 6194599590932237539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_12
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 256
+        width: 41
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 425592670a1505fe0800000000000000
+      internalID: -1202371350888884956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_13
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 256
+        width: 41
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75c948d33393f8db0800000000000000
+      internalID: -4787544986633331625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_14
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 256
+        width: 43
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4762e6c6d68890ba0800000000000000
+      internalID: -6122212214881507724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_15
+      rect:
+        serializedVersion: 2
+        x: 395
+        y: 256
+        width: 42
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7c24a1a942b70bb0800000000000000
+      internalID: -4969807634465805189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_16
+      rect:
+        serializedVersion: 2
+        x: 459
+        y: 256
+        width: 42
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d539f6d0dbf112230800000000000000
+      internalID: 3612203272962544477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_17
+      rect:
+        serializedVersion: 2
+        x: 523
+        y: 256
+        width: 42
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c1da6b128c031a120800000000000000
+      internalID: 2423271710619249948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_18
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 192
+        width: 38
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 084fc81eeac4fed30800000000000000
+      internalID: 4462870069739582592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_19
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 192
+        width: 38
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e209fd3ae22bdc090800000000000000
+      internalID: -8012552248634666962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_20
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 192
+        width: 38
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 27392ccec40d74310800000000000000
+      internalID: 1389308038875353970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_21
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 192
+        width: 43
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6f9c4e4059f43b00800000000000000
+      internalID: 807544356512505710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_22
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 192
+        width: 43
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d09d62ae0d34e4990800000000000000
+      internalID: -7399902573162473203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_23
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 192
+        width: 44
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1dbb7177847cac700800000000000000
+      internalID: 561480217610664913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_24
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 192
+        width: 42
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c87f0056639491e0800000000000000
+      internalID: -2191965050983450428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_25
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 192
+        width: 42
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a73d03746b2404c0800000000000000
+      internalID: -4322282031941863516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_26
+      rect:
+        serializedVersion: 2
+        x: 521
+        y: 192
+        width: 42
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 156e5c3386fa17ed0800000000000000
+      internalID: -2417958662841178543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_27
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 128
+        width: 38
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d4e6b77adaa01d90800000000000000
+      internalID: -7129010354839427888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_28
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 128
+        width: 38
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9da63205427e0250800000000000000
+      internalID: 5912789001499487645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_29
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 128
+        width: 38
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48cb4aa1ff3af41a0800000000000000
+      internalID: -6823054594384020348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_30
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 128
+        width: 46
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 18318e4cce719b470800000000000000
+      internalID: 8410780084774376321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_31
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 128
+        width: 46
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ea4a58c70550a550800000000000000
+      internalID: 6170024981412072165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_32
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 128
+        width: 41
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b24b5a05e6132a8f0800000000000000
+      internalID: -530807456207096789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_33
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 128
+        width: 41
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dfc418e48c4a66fc0800000000000000
+      internalID: -3501930480016470787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_34
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 128
+        width: 41
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b76b373aca564ddf0800000000000000
+      internalID: -156388294900074885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_35
+      rect:
+        serializedVersion: 2
+        x: 521
+        y: 128
+        width: 41
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4334af0a020830c0800000000000000
+      internalID: -4595921177496243377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_36
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 64
+        width: 38
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f493ee90e95cd390800000000000000
+      internalID: -7792254433984539404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_37
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 64
+        width: 38
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 28b208e1080f2dc40800000000000000
+      internalID: 5535751325049957250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_38
+      rect:
+        serializedVersion: 2
+        x: 141
+        y: 64
+        width: 38
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72ca34d4344328490800000000000000
+      internalID: -7745570945460098009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_39
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 64
+        width: 51
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 068acc4c86ec564d0800000000000000
+      internalID: -3141878215647385504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_40
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 64
+        width: 51
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4852b979f67a5b1e0800000000000000
+      internalID: -2182654346664401532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_41
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 64
+        width: 41
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25ed398b3b9e32060800000000000000
+      internalID: 6927637609931071058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_42
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 64
+        width: 42
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a37e9cb8e5109870800000000000000
+      internalID: 8687467770538783656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_43
+      rect:
+        serializedVersion: 2
+        x: 454
+        y: 64
+        width: 42
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e9068e16cf8b6edd0800000000000000
+      internalID: -2457073152570138466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_44
+      rect:
+        serializedVersion: 2
+        x: 518
+        y: 64
+        width: 42
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dde5d12a4fbea6a30800000000000000
+      internalID: 4209436237655531229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_45
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 61
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 96b78b4e63ca13d70800000000000000
+      internalID: 9021180880365321065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_46
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 0
+        width: 61
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d012c35235fd1a530800000000000000
+      internalID: 3864615503460573453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_47
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 0
+        width: 61
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68edd6289253b4410800000000000000
+      internalID: 1462320956410027654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_48
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 0
+        width: 51
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 69ecec05abdc5b350800000000000000
+      internalID: 6031953476035989142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_49
+      rect:
+        serializedVersion: 2
+        x: 263
+        y: 0
+        width: 51
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f364327b61feeca20800000000000000
+      internalID: 3084665675636229695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_50
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 0
+        width: 41
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe80c91542ebc7c90800000000000000
+      internalID: -7170647443483391761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_51
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 0
+        width: 42
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b1fc3ea44bcd2d100800000000000000
+      internalID: 131410006055833371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_52
+      rect:
+        serializedVersion: 2
+        x: 453
+        y: 0
+        width: 42
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df0c1ec67372cc780800000000000000
+      internalID: -8661504864336887555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FanhBatRight_53
+      rect:
+        serializedVersion: 2
+        x: 517
+        y: 0
+        width: 42
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ead61c10b882b2710800000000000000
+      internalID: 1669472664365919662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      FanhBatRight_0: 5980491373123216849
+      FanhBatRight_1: -786227483908685225
+      FanhBatRight_10: 3704978630825812723
+      FanhBatRight_11: 6194599590932237539
+      FanhBatRight_12: -1202371350888884956
+      FanhBatRight_13: -4787544986633331625
+      FanhBatRight_14: -6122212214881507724
+      FanhBatRight_15: -4969807634465805189
+      FanhBatRight_16: 3612203272962544477
+      FanhBatRight_17: 2423271710619249948
+      FanhBatRight_18: 4462870069739582592
+      FanhBatRight_19: -8012552248634666962
+      FanhBatRight_2: 8010427731747150935
+      FanhBatRight_20: 1389308038875353970
+      FanhBatRight_21: 807544356512505710
+      FanhBatRight_22: -7399902573162473203
+      FanhBatRight_23: 561480217610664913
+      FanhBatRight_24: -2191965050983450428
+      FanhBatRight_25: -4322282031941863516
+      FanhBatRight_26: -2417958662841178543
+      FanhBatRight_27: -7129010354839427888
+      FanhBatRight_28: 5912789001499487645
+      FanhBatRight_29: -6823054594384020348
+      FanhBatRight_3: 6165177767256275679
+      FanhBatRight_30: 8410780084774376321
+      FanhBatRight_31: 6170024981412072165
+      FanhBatRight_32: -530807456207096789
+      FanhBatRight_33: -3501930480016470787
+      FanhBatRight_34: -156388294900074885
+      FanhBatRight_35: -4595921177496243377
+      FanhBatRight_36: -7792254433984539404
+      FanhBatRight_37: 5535751325049957250
+      FanhBatRight_38: -7745570945460098009
+      FanhBatRight_39: -3141878215647385504
+      FanhBatRight_4: -8566735316120477559
+      FanhBatRight_40: -2182654346664401532
+      FanhBatRight_41: 6927637609931071058
+      FanhBatRight_42: 8687467770538783656
+      FanhBatRight_43: -2457073152570138466
+      FanhBatRight_44: 4209436237655531229
+      FanhBatRight_45: 9021180880365321065
+      FanhBatRight_46: 3864615503460573453
+      FanhBatRight_47: 1462320956410027654
+      FanhBatRight_48: 6031953476035989142
+      FanhBatRight_49: 3084665675636229695
+      FanhBatRight_5: 5477027350127210455
+      FanhBatRight_50: -7170647443483391761
+      FanhBatRight_51: 131410006055833371
+      FanhBatRight_52: -8661504864336887555
+      FanhBatRight_53: 1669472664365919662
+      FanhBatRight_6: -7976165535859198917
+      FanhBatRight_7: 7143840489753329710
+      FanhBatRight_8: 725437434520516870
+      FanhBatRight_9: 415936009632508166
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
