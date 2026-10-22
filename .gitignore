@@ -366,3 +366,4 @@ crashlytics-build.properties
 # Unity cần Packages/manifest.json và packages-lock.json
 !/Packages/manifest.json
 !/Packages/packages-lock.json
+/LevelDump/
