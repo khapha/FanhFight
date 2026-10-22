@@ -15,6 +15,10 @@ public class Enemy : MonoBehaviour
     public float moveSpeed;
 
     public Rigidbody2D rb2d;
+
+    public float verticalRange = 1.5f;
+    public float retreatTime = 1f;
+    private float homeX, homeY, retreatTimer;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -24,6 +28,8 @@ public class Enemy : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         rb2d = GetComponent<Rigidbody2D>();
+        homeX = transform.position.x;
+        homeY = transform.position.y;
     }
 
     // Update is called once per frame
@@ -58,16 +64,26 @@ public class Enemy : MonoBehaviour
             //Enemy move left
             transform.localScale = new Vector2(1, 1);
         }
-        // bay thẳng về phía player (cả chiều dọc), lượn nhẹ lên xuống
-        Vector2 dir = ((Vector2)player.transform.position - (Vector2)transform.position).normalized;
-        float bob = Mathf.Sin(Time.time * 6f) * 0.5f;
-        rb2d.linearVelocity = dir * moveSpeed + new Vector2(0, bob);
+        // vừa cắn trúng thì lùi ra xa một lúc
+        float dirX = Mathf.Sign(player.transform.position.x - transform.position.x);
+        if (retreatTimer > 0)
+        {
+            retreatTimer -= Time.deltaTime;
+            dirX = -dirX;
+        }
+        // chỉ bay quanh độ cao ban đầu, không chui xuống đất
+        float targetY = Mathf.Clamp(player.transform.position.y + 0.3f, homeY - verticalRange, homeY + verticalRange);
+        float bob = Mathf.Sin(Time.time * 6f) * 0.3f;
+        float vy = Mathf.Clamp(targetY - transform.position.y, -1f, 1f) * moveSpeed + bob;
+        rb2d.linearVelocity = new Vector2(dirX * moveSpeed, vy);
         fly = true;
     }
     private void stopchase()
     {
-        rb2d.linearVelocity = new Vector2(0, 0);
-        fly = false;
+        // bay về chỗ cũ
+        Vector2 toHome = new Vector2(homeX, homeY) - (Vector2)transform.position;
+        rb2d.linearVelocity = toHome.magnitude > 0.2f ? toHome.normalized * moveSpeed * 0.5f : Vector2.zero;
+        fly = toHome.magnitude > 0.2f;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -78,6 +94,7 @@ public class Enemy : MonoBehaviour
             {
                 collision.SendMessageUpwards("Damage", 1);
                 player.KnockBack(400f, transform.position);
+                retreatTimer = retreatTime;
 
             }
         }

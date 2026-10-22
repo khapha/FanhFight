@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PausedMenu : MonoBehaviour
 {
@@ -11,6 +13,8 @@ public class PausedMenu : MonoBehaviour
     void Start()
     {
         pauseUI.SetActive(false);
+        foreach (TMPro.TMP_Text t in pauseUI.GetComponentsInChildren<TMPro.TMP_Text>(true))
+            if (t.text == "Quit") t.text = "Menu";
     }
 
     // Update is called once per frame
@@ -20,7 +24,13 @@ public class PausedMenu : MonoBehaviour
         if (GameInput.Pause.WasPressedThisFrame())
         {
             pause = !pause;
-
+            // chọn sẵn nút đầu tiên để điều khiển bằng bàn phím/tay cầm
+            if (pause && EventSystem.current != null)
+            {
+                Button first = pauseUI.GetComponentInChildren<Button>(true);
+                if (first != null) EventSystem.current.SetSelectedGameObject(first.gameObject);
+            }
+            if (!pause) ClearSelection();
         }
         if (pause)
         {
@@ -37,13 +47,21 @@ public class PausedMenu : MonoBehaviour
     public void Resume()
     {
         pause = false;
+        ClearSelection();
+    }
+    // bỏ chọn nút, để phím Space (chém) không bấm nhầm Restart/Quit khi đang chơi
+    void ClearSelection()
+    {
+        if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
     }
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+    // về menu chính thay vì thoát hẳn game
     public void Quit()
     {
-        Application.Quit();
+        Time.timeScale = 1;
+        SceneManager.LoadScene(0);
     }
 }

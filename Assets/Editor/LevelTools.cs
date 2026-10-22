@@ -42,6 +42,26 @@ public static class LevelTools
         foreach (Transform c in t) Write(sb, c, depth + 1);
     }
 
+    // liệt kê khung (bounds) của mọi collider đặc trong màn 2, xếp theo x
+    public static void Colliders()
+    {
+        EditorSceneManager.OpenScene("Assets/Scenes/Scene 2.unity");
+        StringBuilder sb = new StringBuilder();
+        var list = new List<Collider2D>(Object.FindObjectsByType<Collider2D>(FindObjectsSortMode.None));
+        list.Sort((a, b) => a.bounds.min.x.CompareTo(b.bounds.min.x));
+        foreach (Collider2D c in list)
+        {
+            if (c.isTrigger && !c.CompareTag("Spikes")) continue;
+            if (c.attachedRigidbody != null && c.attachedRigidbody.bodyType == RigidbodyType2D.Dynamic) continue;
+            Bounds b = c.bounds;
+            if (b.size.x > 150) continue;
+            PlatformEffector2D pe = c.GetComponent<PlatformEffector2D>();
+            sb.AppendLine(string.Format("{0,-28} [{1}] x {2,7:F1}..{3,7:F1}  y {4,6:F1}..{5,6:F1}{6}",
+                c.name, c.tag, b.min.x, b.max.x, b.min.y, b.max.y, (pe != null && c.usedByEffector) ? " oneway" : ""));
+        }
+        File.WriteAllText(Path.Combine(OutDir, "Scene 2 colliders.txt"), sb.ToString());
+    }
+
     // chụp góc nhìn của camera game tại vài điểm dọc màn (xem nền, UI không có)
     public static void Shots()
     {

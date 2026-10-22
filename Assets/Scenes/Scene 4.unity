@@ -1040,6 +1040,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   r2: {fileID: 0}
   timedelay: 0.5
+  respawnDelay: 3
 --- !u!61 &81919181
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1290,7 +1291,7 @@ GameObject:
   m_Component:
   - component: {fileID: 110326602}
   - component: {fileID: 110326601}
-  - component: {fileID: 110326600}
+  - component: {fileID: 110326603}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -1298,26 +1299,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &110326600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 110326599}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
 --- !u!114 &110326601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1348,6 +1329,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &110326603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 110326599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.UI.InputSystemUIInputModule
+  m_SendPointerHoverToParent: 1
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_SubmitAction: {fileID: 2064916234097673511, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_CancelAction: {fileID: -1967631576421560919, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_LeftClickAction: {fileID: 8056856818456041789, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MiddleClickAction: {fileID: 3279352641294131588, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_RightClickAction: {fileID: 3837173908680883260, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_ScrollWheelAction: {fileID: 4502412055082496612, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDevicePositionAction: {fileID: 4754684134866288074, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 1025543830046995696, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
+  m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!1 &114540397
 GameObject:
   m_ObjectHideFlags: 0
@@ -3034,9 +3046,11 @@ MonoBehaviour:
   FlyAnimator: {fileID: 0}
   fly: 0
   player: {fileID: 296510897}
-  argoRange: 7
-  moveSpeed: 8
+  argoRange: 6
+  moveSpeed: 3
   rb2d: {fileID: 0}
+  verticalRange: 1.5
+  retreatTime: 1
 --- !u!50 &230618903
 Rigidbody2D:
   serializedVersion: 5
@@ -9158,9 +9172,11 @@ MonoBehaviour:
   FlyAnimator: {fileID: 0}
   fly: 0
   player: {fileID: 296510897}
-  argoRange: 7
-  moveSpeed: 8
+  argoRange: 6
+  moveSpeed: 3
   rb2d: {fileID: 0}
+  verticalRange: 1.5
+  retreatTime: 1
 --- !u!50 &581551889
 Rigidbody2D:
   serializedVersion: 5
@@ -11031,9 +11047,11 @@ MonoBehaviour:
   FlyAnimator: {fileID: 0}
   fly: 0
   player: {fileID: 296510897}
-  argoRange: 7
-  moveSpeed: 8
+  argoRange: 6
+  moveSpeed: 3
   rb2d: {fileID: 0}
+  verticalRange: 1.5
+  retreatTime: 1
 --- !u!50 &699102542
 Rigidbody2D:
   serializedVersion: 5
@@ -15315,6 +15333,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   r2: {fileID: 0}
   timedelay: 0.5
+  respawnDelay: 3
 --- !u!61 &974669125
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -16589,6 +16608,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   r2: {fileID: 0}
   timedelay: 0.5
+  respawnDelay: 3
 --- !u!61 &1067603285
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -18164,9 +18184,11 @@ MonoBehaviour:
   FlyAnimator: {fileID: 0}
   fly: 0
   player: {fileID: 296510897}
-  argoRange: 7
-  moveSpeed: 8
+  argoRange: 6
+  moveSpeed: 3
   rb2d: {fileID: 0}
+  verticalRange: 1.5
+  retreatTime: 1
 --- !u!50 &1144138292
 Rigidbody2D:
   serializedVersion: 5
@@ -23422,7 +23444,7 @@ Canvas:
   m_GameObject: {fileID: 1554625328}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 519420031}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -23435,7 +23457,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!224 &1554625332
 RectTransform:

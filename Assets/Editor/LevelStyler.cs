@@ -29,6 +29,30 @@ public static class LevelStyler
         Debug.Log("LevelStyler: done");
     }
 
+    // làm đẹp lại riêng màn 1 (sau khi dựng lại bố cục)
+    public static void StyleLevel1()
+    {
+        Sprite grass = AssetDatabase.LoadAssetAtPath<Sprite>(Grass);
+        Sprite dirt = AssetDatabase.LoadAssetAtPath<Sprite>(Dirt);
+        Sprite[] layers = AssetDatabase.FindAssets("t:Texture2D", new[] { Forest })
+            .Select(AssetDatabase.GUIDToAssetPath).OrderByDescending(p => p)
+            .Select(p => AssetDatabase.LoadAssetAtPath<Sprite>(p)).ToArray();
+        Style("Assets/Scenes/Scene 1.unity", layers, Color.white, Color.white, grass, dirt);
+        FixBackgroundColor();
+    }
+
+    // làm đẹp lại riêng màn 2 (sau khi dựng lại bố cục)
+    public static void StyleLevel2()
+    {
+        Sprite grass = AssetDatabase.LoadAssetAtPath<Sprite>(Grass);
+        Sprite dirt = AssetDatabase.LoadAssetAtPath<Sprite>(Dirt);
+        Sprite[] layers = AssetDatabase.FindAssets("t:Texture2D", new[] { Forest })
+            .Select(AssetDatabase.GUIDToAssetPath).OrderByDescending(p => p)
+            .Select(p => AssetDatabase.LoadAssetAtPath<Sprite>(p)).ToArray();
+        Style("Assets/Scenes/Scene 2.unity", layers, new Color(0.8f, 0.9f, 1f), Color.white, grass, dirt);
+        FixBackgroundColor();
+    }
+
     // chỉ đặt lại màu nền camera (không dựng lại gạch)
     public static void FixBackgroundColor()
     {
