@@ -36,7 +36,11 @@ public class GameOverUI : MonoBehaviour
         Transform content = SafeArea.Create(root.transform);
         content = CuteTheme.Card(content, Vector2.one * 0.5f, Vector2.zero, new Vector2(620, 430)).transform;
         AddText(content, title == "YOU WIN!" ? "You did it!" : "Game Over", 54, new Vector2(0, 130));
-        AddText(content, "Score: " + points + "\nBest: " + highscore, 28, new Vector2(0, 35));
+        string summary = "Score: " + points + "\nBest: " + highscore;
+        if (title == "YOU WIN!")
+            summary += "\nRoaches squished: " + QuestState.RunSquished
+                + "\nSecrets found: " + QuestState.RunSecrets + "/3";
+        AddText(content, summary, 28, new Vector2(0, 35));
         Button retry = MiniUI.MakeButton(content, "Retry", new Vector2(0.5f, 0.5f),
             new Vector2(-120, -100), new Vector2(210, 64), () => ui.Load(SceneManager.GetActiveScene().buildIndex));
         MiniUI.MakeButton(content, "Menu", new Vector2(0.5f, 0.5f),

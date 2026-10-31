@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 // Điều khiển dùng Input System mới: bàn phím + tay cầm
 public static class GameInput
 {
-    public static InputAction Move, Jump, Attack, Interact, Down, Pause, Restart, Menu;
+    public static InputAction Move, Jump, Attack, Interact, Down, Pause, Restart, Menu, Dash;
     static bool created = false;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -27,6 +27,7 @@ public static class GameInput
 
         Jump = Button("Jump", "<Keyboard>/upArrow", "<Keyboard>/w", "<Gamepad>/buttonSouth");
         Attack = Button("Attack", "<Keyboard>/space", "<Keyboard>/j", "<Gamepad>/buttonWest");
+        Dash = Button("Dash", "<Keyboard>/leftShift", "<Keyboard>/rightShift", "<Keyboard>/k", "<Gamepad>/leftTrigger", "<Gamepad>/rightTrigger");
         Interact = Button("Interact", "<Keyboard>/e", "<Gamepad>/buttonNorth");
         Down = Button("Down", "<Keyboard>/downArrow", "<Keyboard>/s", "<Gamepad>/dpad/down", "<Gamepad>/leftStick/down");
         Pause = Button("Pause", "<Keyboard>/escape", "<Gamepad>/start");

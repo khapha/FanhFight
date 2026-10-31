@@ -20,9 +20,15 @@ public class Player : MonoBehaviour
     private float baseSpeed, baseMaxspeed;
     private bool dead = false;
     public bool CanAct => !dead && ourHealth > 0 && GameSession.IsPlaying;
-    public bool CanTakeDamage => CanAct && invincibleTimer <= 0;
+    public bool CanTakeDamage => CanAct && invincibleTimer <= 0 && !Dashing && !GodMode;
     public float coyoteTime = 0.1f, jumpBuffer = 0.1f, invincibleTime = 1f;
     private float coyoteTimer, bufferTimer, invincibleTimer;
+    [Header("Dash")]
+    public float dashSpeed = 12f, dashDuration = 0.18f, dashCooldown = 0.9f;
+    private float dashTimer, dashCooldownTimer, dashFxTimer, dashDir = 1f;
+    public bool Dashing => dashTimer > 0;
+    // bot tự chơi dùng: giữ bất tử tạm thời để đi xuyên bẫy (không ảnh hưởng chơi thường)
+    public bool GodMode { get; set; }
     private bool prevJump = false;
     private SpriteRenderer sr;
     private float dustTimer;
@@ -87,6 +93,19 @@ public class Player : MonoBehaviour
         if (jumpReleased && r2.linearVelocity.y > 0)
             r2.linearVelocity = new Vector2(r2.linearVelocity.x, r2.linearVelocity.y * 0.5f);
 
+        // dash: lướt nhanh theo hướng đang quay, bất tử trong lúc lướt (mở khóa bằng orb)
+        if (QuestState.DashUnlocked && GameInput.Dash.WasPressedThisFrame() && dashCooldownTimer <= 0)
+        {
+            float moveNow = Mathf.Clamp(h + GameInput.MoveX, -1f, 1f);
+            dashDir = Mathf.Abs(moveNow) > 0.1f ? Mathf.Sign(moveNow) : (facerright ? 1f : -1f);
+            dashTimer = dashDuration;
+            dashCooldownTimer = dashCooldown;
+            dashFxTimer = 0f;
+            r2.linearVelocity = new Vector2(dashDir * dashSpeed, 0f);
+            Fx.Jump();
+            Fx.Dust(Feet());
+        }
+
         // nhấp nháy khi đang bất tử
         if (invincibleTimer > 0)
         {
@@ -97,14 +116,44 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         if (!dead && ourHealth <= 0) Death();
+        // rơi xuống vực/nước: mất mạng và hồi sinh ở checkpoint (trước đây rơi vô hạn mãi).
+        // GodMode (bot tự chơi) thì được nhấc về checkpoint an toàn thay vì chết.
+        if (!dead && r2 != null && r2.position.y < -7f)
+        {
+            if (GodMode)
+            {
+                Vector3 spawn = Checkpoint.SpawnPoint;
+                Vector3 delta = spawn - transform.position;
+                r2.linearVelocity = Vector2.zero;
+                r2.position = spawn;
+                transform.position = spawn;
+                CameraRig.Warp(transform, delta);
+                return;
+            }
+            Death();
+            return;
+        }
         if (!CanAct) return;
-        Move(h);
-        r2.AddForce((Vector2.right) * speed * h);
 
-        float hkey = GameInput.MoveX;
-        r2.AddForce((Vector2.right) * speed * hkey);
+        // dash đang chạy: giữ nguyên vận tốc lướt, bỏ qua lực điều khiển thường
+        if (dashTimer > 0)
+        {
+            dashTimer -= Time.fixedDeltaTime;
+            r2.linearVelocity = new Vector2(dashDir * dashSpeed, 0f);
+            dashFxTimer -= Time.fixedDeltaTime;
+            if (dashFxTimer <= 0)
+            {
+                dashFxTimer = 0.05f;
+                Fx.Dust(Feet());
+            }
+            return;
+        }
+        if (dashCooldownTimer > 0) dashCooldownTimer -= Time.fixedDeltaTime;
 
-
+        // một lực duy nhất: nút cảm ứng (h) và bàn phím được cộng lại rồi chặn trong [-1,1],
+        // không nhân đôi tốc độ khi cả hai nguồn cùng giữ
+        float move = Mathf.Clamp(h + GameInput.MoveX, -1f, 1f);
+        r2.AddForce((Vector2.right) * speed * move);
 
         //giới hạn tốc độ
         if (r2.linearVelocity.x > maxspeed)
@@ -119,11 +168,11 @@ public class Player : MonoBehaviour
         if(r2.linearVelocity.y < -maxjump)
             r2.linearVelocity = new Vector2(r2.linearVelocity.x, -maxjump);
 
-        if ((h >0 && !facerright) || (hkey > 0 && !facerright))
+        if (move > 0 && !facerright)
         {
             Flip();
         }
-        if ((h < 0 && facerright) || (hkey < 0 && facerright))
+        if (move < 0 && facerright)
         {
             Flip();
         }
@@ -137,10 +186,6 @@ public class Player : MonoBehaviour
         {
             dustTimer = 0.2f;
             Fx.Dust(Feet());
-        }
-        if (ourHealth <= 0)
-        {
-            Death();
         }
 
     }
@@ -261,17 +306,19 @@ public class Player : MonoBehaviour
             Destroy(collision.gameObject);
             maxspeed = 6;
             speed = 100f;
-            StartCoroutine(timecount(5));
+            // hủy đếm cũ nếu đang chạy (nhặt giày mới = đồng hồ bắt đầu lại)
+            if (shoesTimer != null) StopCoroutine(shoesTimer);
+            shoesTimer = StartCoroutine(timecount(5));
         }
 
     }
+    Coroutine shoesTimer;
     IEnumerator timecount (float time)
     {
         yield return new WaitForSeconds(time);
         maxspeed = baseMaxspeed;
         speed = baseSpeed;
-        yield return 0;
-            
+        shoesTimer = null;
     }
 
 }

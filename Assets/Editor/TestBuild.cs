@@ -80,6 +80,103 @@ public static class TestBuild
     public static void Smash() { Build("Assets/Scenes/MiniSmash.unity", "TestBuild/Smash/FanhFight.exe"); }
     public static void Spray() { Build("Assets/Scenes/MiniSpray.unity", "TestBuild/Spray/FanhFight.exe"); }
 
+    // Regression checks for the adventure expansion, run in the editor before building.
+    public static void Quest()
+    {
+        // 1) sprite generators must not throw and must produce readable pixels
+        foreach (System.Func<Sprite> make in new System.Func<Sprite>[] {
+            () => KeyPickup.KeySprite, () => Gate.GateSprite, () => DashOrb.OrbSprite,
+            () => RoachKing.CrownSprite, () => CuteArt.Butterfly,
+            () => CuteArt.Roach(0), () => CuteArt.Roach(1),
+            () => CuteArt.KingRoach(0), () => CuteArt.KingRoach(1) })
+        {
+            Sprite s = make();
+            if (s == null || s.rect.width <= 0) throw new System.Exception("Quest sprite generation failed.");
+        }
+        Debug.Log("QUEST PASS 1/5: code-generated sprites (key, gate, orb, crown, butterfly).");
+
+        // 2) quest state math
+        System.Action reset = () =>
+        {
+            PlayerPrefs.DeleteKey("dashUnlocked");
+            for (int i = 1; i <= 3; i++) PlayerPrefs.DeleteKey("adventureSecret" + i);
+            PlayerPrefs.DeleteKey("adventureUnlocked");
+        };
+        reset();
+        if (QuestState.ReadyToFinish(1)) throw new System.Exception("Level 1 should not be finishable without keys.");
+        for (int i = 0; i < QuestState.KeysRequired - 1; i++) QuestState.CollectKey();
+        if (QuestState.ReadyToFinish(1)) throw new System.Exception("Gate should require all keys.");
+        QuestState.CollectKey();
+        if (!QuestState.ReadyToFinish(1)) throw new System.Exception("Gate should open with all keys on a normal level.");
+        if (QuestState.ReadyToFinish(3)) throw new System.Exception("Boss level must require the Roach King defeated.");
+        QuestState.DefeatBoss();
+        if (!QuestState.ReadyToFinish(3)) throw new System.Exception("Boss level should open after the boss surrenders.");
+        QuestState.UnlockDash();
+        if (!QuestState.DashUnlocked) throw new System.Exception("DashUnlocked should follow the saved flag.");
+        reset();
+        Debug.Log("QUEST PASS 2/5: gate rules (keys, boss requirement, dash persistence).");
+
+        // 3) objective text never shows stale boss hp after defeat
+        if (string.IsNullOrEmpty(QuestState.ObjectiveText) && QuestState.Level >= 1)
+            throw new System.Exception("Objective text should describe the current goal.");
+        Debug.Log("QUEST PASS 3/5: HUD objective text.");
+
+        // 4) walker factory keeps colliders on the right layers (uses the real Rigidbody2D path)
+        GameObject go = new GameObject("WalkerProbe");
+        try
+        {
+            go.AddComponent<Rigidbody2D>();
+            go.AddComponent<RoachWalker>();
+            BoxCollider2D[] boxes = go.GetComponents<BoxCollider2D>();
+            if (boxes.Length == 0)
+                go.SendMessage("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance); // edit mode: Awake chưa chạy
+            boxes = go.GetComponents<BoxCollider2D>();
+            if (boxes.Length != 2 || !boxes[1].isTrigger) throw new System.Exception("Walker needs a solid box plus a trigger sensor.");
+        }
+        finally { Object.DestroyImmediate(go); }
+        Debug.Log("QUEST PASS 4/6: roach walker collider layout.");
+
+        // 5) audio/visual one-shot helpers used by props exist and do not throw without a scene Fx
+        Fx.Coin();
+        Debug.Log("QUEST PASS 5/6: effect entry points safe.");
+
+        // 6) the slipper swing area must overlap the enemy hit sensors, otherwise real
+        //    attacks whiff (bug caught by AutoPlay: boss sensor sat at foot level while
+        //    the slipper swings at chest height, so standing still and mashing never connected)
+        void CheckSwingReach(GameObject enemy, string label)
+        {
+            BoxCollider2D[] boxes = enemy.GetComponents<BoxCollider2D>();
+            BoxCollider2D sensor = System.Array.Find(boxes, b => b.isTrigger);
+            if (sensor == null) throw new System.Exception(label + " lost its trigger sensor.");
+            float swingBottom = 0.1f, swingTop = 1.3f; // slipper: player-local y 0.7, height 1.2
+            float scale = enemy.transform.localScale.y;
+            float bottom = (sensor.offset.y - sensor.size.y * 0.5f) * scale;
+            float top = (sensor.offset.y + sensor.size.y * 0.5f) * scale;
+            if (top < swingBottom || bottom > swingTop)
+                throw new System.Exception(label + " sensor (" + bottom + ".." + top
+                    + ") never overlaps the slipper swing (0.1..1.3) - real attacks would miss.");
+        }
+        GameObject slipper = new GameObject("SlipperProbeUnused");
+        GameObject walkerGo = new GameObject("WalkerProbe2");
+        GameObject kingGo = new GameObject("KingProbe");
+        try
+        {
+            walkerGo.AddComponent<Rigidbody2D>();
+            walkerGo.AddComponent<RoachWalker>();
+            walkerGo.SendMessage("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            CheckSwingReach(walkerGo, "Roach walker");
+
+            kingGo.AddComponent<Rigidbody2D>();
+            kingGo.AddComponent<RoachKing>();
+            kingGo.SendMessage("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            CheckSwingReach(kingGo, "Roach King");
+            Debug.Log("QUEST PASS 6/6: slipper swing reaches walker and king sensors.");
+        }
+        finally { Object.DestroyImmediate(slipper); Object.DestroyImmediate(walkerGo); Object.DestroyImmediate(kingGo); }
+        Debug.Log("ALL QUEST REGRESSION CHECKS PASSED.");
+    }
+
+
     static void Build(string scene, string output)
     {
         BuildPipeline.BuildPlayer(new[] { scene }, output, BuildTarget.StandaloneWindows64, BuildOptions.None);

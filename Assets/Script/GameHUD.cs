@@ -13,6 +13,10 @@ public class GameHUD : MonoBehaviour
     GameMaster gm;
     Image[] hearts;
     TextMeshProUGUI coinText, livesText, bestText, toastText;
+    TextMeshProUGUI questText, bossTitle;
+    Image bossFill, bossFillBg;
+    RectTransform bossCard;
+    int shownBossHp = -1;
     float toastTimer;
     static Sprite heartSprite, circleSprite;
     Transform content;
@@ -22,12 +26,15 @@ public class GameHUD : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
     {
-        SceneManager.sceneLoaded += (scene, mode) =>
-        {
-            GameObject p = GameObject.FindGameObjectWithTag("Player");
-            if (p == null) return;
-            new GameObject("GameHUD").AddComponent<GameHUD>().Build(p.GetComponent<Player>(), LevelNumber(scene.name));
-        };
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        GameObject p = GameObject.FindGameObjectWithTag("Player");
+        if (p == null) return;
+        new GameObject("GameHUD").AddComponent<GameHUD>().Build(p.GetComponent<Player>(), LevelNumber(scene.name));
     }
 
     // số thứ tự màn theo tên scene (màn 3 nằm trong file Scene 4)
@@ -84,8 +91,33 @@ public class GameHUD : MonoBehaviour
         titleText.rectTransform.anchoredPosition = Vector2.zero;
         // phải trên: điểm cao nhất
         bestText = MakeText("", 26, new Vector2(1, 1), new Vector2(-30, -30), TextAlignmentOptions.Right);
+        // dưới best: dòng nhiệm vụ
+        questText = MakeText("", 22, new Vector2(1, 1), new Vector2(-30, -84), TextAlignmentOptions.Right);
+        questText.color = new Color(0.4f, 0.34f, 0.16f);
+        // giữ viền trắng đậm để nổi trên mọi nền (CuteTheme.Text mặc định xóa outline)
+        questText.outlineWidth = 0.55f;
+        questText.outlineColor = Color.white;
         // giữa màn: thông báo ngắn (checkpoint...)
         toastText = MakeText("", 40, new Vector2(0.5f, 0.5f), new Vector2(0, 140), TextAlignmentOptions.Center);
+        // dưới toast: thanh máu Vua Gián (chỉ hiện khi đang đánh boss)
+        bossCard = CuteTheme.Card(content, new Vector2(0.5f, 0.5f), new Vector2(0, 60), new Vector2(380, 46)).rectTransform;
+        bossCard.gameObject.SetActive(false);
+        bossTitle = MakeText("Roach King", 20, new Vector2(0.5f, 0.5f), new Vector2(0, 16), TextAlignmentOptions.Center);
+        bossTitle.transform.SetParent(bossCard, false);
+        bossTitle.rectTransform.anchoredPosition = new Vector2(0, 10);
+        bossFill = MakeImage(circleSprite, new Vector2(0.5f, 0.5f), new Vector2(-170, -6), new Vector2(1f, 1f));
+        bossFill.transform.SetParent(bossCard, false);
+        bossFill.rectTransform.pivot = new Vector2(0f, 0.5f);
+        bossFill.rectTransform.anchorMin = bossFill.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        bossFill.color = new Color(0.85f, 0.45f, 0.55f);
+        bossFill.rectTransform.anchoredPosition = new Vector2(-170, -4);
+        bossFillBg = MakeImage(circleSprite, new Vector2(0.5f, 0.5f), new Vector2(-170, -6), new Vector2(1f, 1f));
+        bossFillBg.transform.SetParent(bossCard, false);
+        bossFillBg.rectTransform.pivot = new Vector2(0f, 0.5f);
+        bossFillBg.rectTransform.anchorMin = bossFillBg.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        bossFillBg.color = new Color(0.3f, 0.28f, 0.35f, 0.55f);
+        bossFillBg.rectTransform.anchoredPosition = new Vector2(-170, -4);
+        bossFillBg.transform.SetSiblingIndex(bossFill.transform.GetSiblingIndex() - 1);
     }
 
     // tắt chữ điểm/điểm cao và thanh máu cũ (script cũ vẫn chạy bình thường)
@@ -182,6 +214,22 @@ public class GameHUD : MonoBehaviour
         }
         int best = Mathf.Max(gm.highscore, gm.points);
         if (lastBest != best) { lastBest = best; bestText.text = "Best: " + best; }
+
+        // dòng nhiệm vụ hiện tại
+        string quest = QuestState.ObjectiveText;
+        if (questText.text != quest) questText.text = quest;
+
+        // thanh máu Vua Gián: chỉ hiện khi có ít nhất một cú đánh trúng boss
+        bool bossFight = QuestState.BossHp >= 0 && QuestState.BossHp > 0 && !QuestState.BossDefeated;
+        if (bossCard.gameObject.activeSelf != bossFight) bossCard.gameObject.SetActive(bossFight);
+        if (bossFight && shownBossHp != QuestState.BossHp)
+        {
+            shownBossHp = QuestState.BossHp;
+            float frac = (float)shownBossHp / QuestState.BossMaxHp;
+            bossFill.rectTransform.sizeDelta = new Vector2(Mathf.Max(340f * frac, 6f), 14f);
+            bossFillBg.rectTransform.sizeDelta = new Vector2(340f, 14f);
+        }
+
         if (toastTimer > 0)
         {
             toastTimer -= Time.unscaledDeltaTime;

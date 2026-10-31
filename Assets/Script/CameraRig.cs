@@ -10,8 +10,12 @@ public class CameraRig : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
     {
-        SceneManager.sceneLoaded += (scene, mode) => Setup();
+        // -= trước += để không bị đăng ký trùng khi tắt Domain Reload trong Editor
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
+
+    static void OnSceneLoaded(Scene scene, LoadSceneMode mode) { Setup(); }
 
     static void Setup()
     {
@@ -74,6 +78,9 @@ public class CameraRig : MonoBehaviour
 
     public static void Warp(Transform target, Vector3 delta)
     {
+        // chặn giá trị rác (NaN/vô cực) làm hỏng máy quay Cinemachine
+        if (float.IsNaN(delta.x) || float.IsNaN(delta.y) || float.IsInfinity(delta.x) || float.IsInfinity(delta.y))
+            return;
         CinemachineCore.OnTargetObjectWarped(target, delta);
     }
 }

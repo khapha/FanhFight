@@ -109,8 +109,10 @@ public class MainMenu : MonoBehaviour
         Label(card, "Ready for adventure?", 36, new Vector2(0, 240));
         TextMeshProUGUI help = Label(card,
             "Move: A / D or Left / Right arrows\nDouble jump: W / Up (press twice)\n"
-            + "Spray: Space / J    |    Enter door: E\nDrop down: S    |    Pause: Esc\n"
-            + "Controller: A Jump, X Spray, Y Enter\nStart: Pause",
+            + "Spray: Space / J    |    Enter door: E\nDash: Shift / K (after the blue orb)\n"
+            + "Drop down: S    |    Pause: Esc\n"
+            + "Controller: A Jump, X Spray, Y Enter\nStart: Pause\n"
+            + "Find 3 keys, bop the Roach King, open the gate!",
             20, new Vector2(0, 100));
         help.rectTransform.sizeDelta = new Vector2(540, 190);
         musicText = Label(card, "", 22, new Vector2(0, -65));

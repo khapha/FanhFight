@@ -45,6 +45,16 @@ public class CutePreview : MonoBehaviour
             yield return new WaitForSecondsRealtime(4);
             yield return Capture(output, "03-forest.png");
             yield return CheckMotion("Woodland");
+            // props nhiệm vụ: dịch người chơi tới gần chìa khóa rồi tới cổng để chụp
+            Player propsPlayer = FindAnyObjectByType<Player>();
+            propsPlayer.r2.position = new Vector2(53f, 3f);
+            propsPlayer.r2.linearVelocity = Vector2.zero;
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return Capture(output, "03b-key.png");
+            propsPlayer.r2.position = new Vector2(185f, 3f);
+            propsPlayer.r2.linearVelocity = Vector2.zero;
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return Capture(output, "03c-gate.png");
             Enemy enemy = FindAnyObjectByType<Enemy>();
             if (enemy != null)
             {
@@ -80,6 +90,21 @@ public class CutePreview : MonoBehaviour
             yield return new WaitForSecondsRealtime(3);
             yield return Capture(output, "08-cave.png");
             yield return CheckMotion("Rocky Cave");
+            // đánh Vua Gián: đủ 6 phát thì phải đầu hàng, cổng mở
+            Player bossPlayer = FindAnyObjectByType<Player>();
+            bossPlayer.r2.position = new Vector2(195f, 3f);
+            bossPlayer.r2.linearVelocity = Vector2.zero;
+            yield return new WaitForSecondsRealtime(1.5f);
+            yield return Capture(output, "08b-boss.png");
+            RoachKing king = FindAnyObjectByType<RoachKing>();
+            if (king != null)
+            {
+                for (int i = 0; i < 6; i++) king.SendMessage("Damage", 20);
+                yield return new WaitForSecondsRealtime(2.2f);
+                if (!QuestState.BossDefeated) throw new System.Exception("Roach King did not surrender after 6 hits.");
+                Debug.Log("BOSS PASS: Roach King surrendered, gate opened, butterflies released.");
+                yield return Capture(output, "08c-victory.png");
+            }
             SceneManager.LoadScene("MiniSmash");
             yield return new WaitForSecondsRealtime(4);
             yield return Capture(output, "09-smash.png");
@@ -99,7 +124,7 @@ public class CutePreview : MonoBehaviour
         Application.Quit();
     }
 
-    static IEnumerator Capture(string folder, string name)
+    public static IEnumerator Capture(string folder, string name)
     {
         yield return new WaitForEndOfFrame();
         foreach (TMPro.TMP_Text text in FindObjectsByType<TMPro.TMP_Text>(FindObjectsSortMode.None))
