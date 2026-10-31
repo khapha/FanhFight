@@ -119,6 +119,9 @@ public static class TestBuild
         if (QuestState.ReadyToFinish(3)) throw new System.Exception("Boss level must require the Roach King defeated.");
         QuestState.DefeatBoss();
         if (!QuestState.ReadyToFinish(3)) throw new System.Exception("Boss level should open after the boss surrenders.");
+        if (QuestState.ReadyToFinish(4)) throw new System.Exception("Mini-boss level must require the Roach Dancer's bow.");
+        QuestState.DefeatMiniBoss();
+        if (!QuestState.ReadyToFinish(4)) throw new System.Exception("Mini-boss level should open after the bow.");
         QuestState.UnlockDash();
         if (!QuestState.DashUnlocked) throw new System.Exception("DashUnlocked should follow the saved flag.");
         reset();

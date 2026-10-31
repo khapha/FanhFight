@@ -210,7 +210,7 @@ public class AutoPlay : MonoBehaviour
                 : "AUTOPLAY WARN: secret not reachable on level " + level);
         }
 
-        // 4) Vua Gián ở màn cuối
+        // 4) Vua Gián ở màn cuối / Gián Vũ Công ở màn Sunset Meadow
         if (level == QuestState.BossLevel)
         {
             if (FindAnyObjectByType<RoachKing>() == null)
@@ -220,6 +220,16 @@ public class AutoPlay : MonoBehaviour
             Debug.Log("AUTOPLAY PASS: Roach King defeated");
             yield return new WaitForSecondsRealtime(1.5f);
             yield return Shot(output, "aL3-bossdown.png");
+        }
+        if (level == QuestState.MiniBossLevel)
+        {
+            RoachDancer dancer = FindAnyObjectByType<RoachDancer>();
+            if (dancer == null) throw new System.Exception("Roach Dancer missing on the mini-boss level.");
+            yield return DanceWith(dancer);
+            if (!QuestState.MiniBossDefeated) throw new System.Exception("Dancer never took a bow.");
+            Debug.Log("AUTOPLAY PASS: Roach Dancer took a bow");
+            yield return new WaitForSecondsRealtime(1.2f);
+            yield return Shot(output, "aL4-dancer.png");
         }
 
         // 5) cổng nhiệm vụ: đi vào vùng cổng là tự mở khi đủ điều kiện
@@ -258,6 +268,26 @@ public class AutoPlay : MonoBehaviour
             throw new System.Exception("Door did not load the next scene.");
         Debug.Log("AUTOPLAY PASS: door -> " + (GameOverUI.IsShowing ? "YOU WIN" : SceneManager.GetActiveScene().name));
         yield return Shot(output, "aL" + level + "-door.png");
+    }
+
+    // khiêu vũ với Vũ Công: chạy tới chạm chú ấy 4 lần (mỗi lần chú xoay tít cúi chào)
+    IEnumerator DanceWith(RoachDancer dancer)
+    {
+        float start = Time.realtimeSinceStartup;
+        while (!QuestState.MiniBossDefeated && Time.realtimeSinceStartup - start < 60f)
+        {
+            if (FindAnyObjectByType<RoachDancer>() == null) yield break; // đã tan
+            Player p = FindAnyObjectByType<Player>();
+            if (p == null || !p.CanAct)
+            {
+                yield return new WaitForSecondsRealtime(0.4f);
+                continue;
+            }
+            // lao vào thân vũ công: trigger chạm là một "bước nhảy" trúng thưởng
+            TeleportPlayer(dancer.transform.position + Vector3.left * 0.9f);
+            yield return new WaitForSecondsRealtime(0.7f);
+            Debug.Log("AUTOPLAY dance hp=" + dancer.Hp + " dancerY=" + dancer.transform.position.y.ToString("F1"));
+        }
     }
 
     IEnumerator FightBoss()
@@ -304,8 +334,12 @@ public class AutoPlay : MonoBehaviour
             }
             if (Mathf.Abs(dx) > 2.3f)
             {
+                // vào thế battle station ngay: đi bộ trong arena dễ dính vực/gai
                 float side = dx > 0 ? -1.7f : 1.7f;
-                yield return WalkTo(king.transform.position.x + side, 0.9f, 6f);
+                float gy = AdventureProps.GroundYNear(king.transform.position.x + side);
+                float ty = float.IsNaN(gy) ? king.transform.position.y : gy + 0.1f;
+                TeleportPlayer(new Vector3(king.transform.position.x + side, ty, 0));
+                yield return new WaitForSecondsRealtime(0.25f);
             }
             else
             {

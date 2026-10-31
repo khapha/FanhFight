@@ -8,7 +8,7 @@ public class Fx : MonoBehaviour
     static Fx instance;
     AudioSource sfx, music;
     AudioClip jumpClip, hurtClip, explodeClip, coinClip, hitClip, sprayClip;
-    AudioClip menuClip, woodlandClip, lakesideClip, caveClip;
+    AudioClip menuClip, woodlandClip, lakesideClip, caveClip, meadowClip;
     static AudioClip jingleClip, jingleClipS, jingleClipL;
     AudioClip currentTrack;
     Material particleMat;
@@ -46,6 +46,8 @@ public class Fx : MonoBehaviour
             new[] { 0, 0, -5, -5, -3, -3, -7, -7 }, 0.24f, 0.8f, 0.3f);
         caveClip = Theme(new[] { 0, 3, 7, 3, 8, 7, 3, 0, 0, 3, 8, 12, 11, 8, 3, 2 },
             new[] { -12, -12, -9, -9, -14, -14, -12, -12 }, 0.16f, 0.1f, 0.12f);
+        meadowClip = Theme(new[] { 7, 12, 14, 12, 7, 5, 7, 9, 12, 9, 7, 5, 2, 5, 7, 12 },
+            new[] { 2, 2, 5, 5, 7, 7, 5, 5 }, 0.18f, 0.5f, 0.35f);
         jingleClip = Theme(new[] { 0, 4, 7, 12, 16, 19, 24, 19, 16, 12, 7, 12 },
             new int[12], 0.11f, 0.95f, 0.9f);
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -162,7 +164,8 @@ public class Fx : MonoBehaviour
         AudioClip want = scene.buildIndex == 0 || level <= 0 ? menuClip
             : level == 1 ? woodlandClip
             : level == 2 ? lakesideClip
-            : level == 3 ? caveClip : menuClip;
+            : level == 3 ? caveClip
+            : level == 4 ? meadowClip : menuClip;
         PlayTrack(want);
     }
 

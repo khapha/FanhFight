@@ -34,10 +34,16 @@ public static class AdventureProps
                 Populate(3, maxX: 212, npc: 8, orb: -1, secret: 145,
                     keys: new[] { 55f, 128f, 185f }, walkers: new[] { 60f, 95f, 130f, 168f }, boss: 202f);
                 break;
+            case 4:
+                // Sunset Meadow (bản copy Scene 1): hazards gốc 46-49, 84-95, 150-165, turret 142
+                // -> props đặt hoàn toàn ngoài các vùng đó cho lối chơi lành mạnh
+                Populate(4, maxX: 190, npc: 10, orb: -1, secret: 130,
+                    keys: new[] { 30f, 70f, 105f }, walkers: new[] { 40f, 60f, 110f, 125f }, dancer: 180);
+                break;
         }
     }
 
-    static void Populate(int level, float maxX, float npc, float orb, float secret, float[] keys, float[] walkers, float boss = -1)
+    static void Populate(int level, float maxX, float npc, float orb, float secret, float[] keys, float[] walkers, float boss = -1, float dancer = -1)
     {
         if (npc > 0) ButterflyNPC.SpawnAt(npc, level);
         foreach (float x in keys) KeyPickup.SpawnAt(x);
@@ -47,6 +53,7 @@ public static class AdventureProps
         if (secret > 0 && !QuestState.SecretFound(level)) SecretSparkle.SpawnAt(secret, level);
         Gate.SpawnAt(maxX + 2, level);
         if (boss > 0) RoachKing.SpawnAt(boss, boss - 14f);
+        if (dancer > 0) RoachDancer.SpawnAt(dancer, dancer - 10f);
         Decorate(maxX);
     }
 

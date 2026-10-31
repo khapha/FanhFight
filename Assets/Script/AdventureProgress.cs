@@ -3,8 +3,8 @@ using UnityEngine.SceneManagement;
 
 public static class AdventureProgress
 {
-    public static readonly string[] Scenes = { "Scene 1", "Scene 2", "Scene 4" };
-    public static readonly string[] Titles = { "Woodland", "Lakeside", "Rocky Cave" };
+    public static readonly string[] Scenes = { "Scene 1", "Scene 2", "Scene 4", "Sunset Meadow" };
+    public static readonly string[] Titles = { "Woodland", "Lakeside", "Rocky Cave", "Sunset Meadow" };
     public static int Count => Scenes.Length;
     public static int Unlocked => Mathf.Clamp(PlayerPrefs.GetInt("adventureUnlocked", 1), 1, Count);
 
