@@ -10,14 +10,17 @@ public class LevelIntro : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
     {
-        SceneManager.sceneLoaded += (scene, mode) =>
-        {
-            // index 0 là menu, các màn bắt đầu từ 1
-            int level = GameHUD.LevelNumber(scene.name);
-            if (level < 1 || level > AdventureProgress.Count) return;
-            GameObject go = new GameObject("LevelIntro");
-            go.AddComponent<LevelIntro>().Show("Level " + level + "/" + AdventureProgress.Count, AdventureProgress.Titles[level - 1]);
-        };
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // index 0 là menu, các màn bắt đầu từ 1
+        int level = GameHUD.LevelNumber(scene.name);
+        if (level < 1 || level > AdventureProgress.Count) return;
+        GameObject go = new GameObject("LevelIntro");
+        go.AddComponent<LevelIntro>().Show("Level " + level + "/" + AdventureProgress.Count, AdventureProgress.Titles[level - 1]);
     }
 
     void Show(string top, string title)

@@ -146,11 +146,12 @@ public class RoachWalker : MonoBehaviour
         if (defeated || !GameSession.IsPlaying) return;
         defeated = true;
         QuestState.RunSquished++;
+        Diary.Rescue(); // mỗi con gián được cứu là một chú bướm mới vào nhật ký
         Fx.HitStop();
         Fx.Popup(transform.position, "+5", new Color(1f, 0.6f, 0.3f));
         GameMaster gm = GameObject.FindGameObjectWithTag("gamemaster")?.GetComponent<GameMaster>();
         if (gm != null) gm.points += 5;
-        Fx.Burst(transform.position + Vector3.up * 0.3f, new Color(0.9f, 0.9f, 0.9f), 14, 2.5f, 0.22f);
+        Fx.Burst(transform.position + Vector3.up * 0.3f, CuteTheme.Pink, 14, 2.5f, 0.22f);
         StartCoroutine(SquashCo());
     }
 

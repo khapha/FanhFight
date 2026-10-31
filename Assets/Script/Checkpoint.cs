@@ -24,16 +24,19 @@ public class Checkpoint : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
     {
-        SceneManager.sceneLoaded += (scene, mode) =>
-        {
-            // mỗi lần vào (hoặc chơi lại) một màn: đủ mạng, hồi sinh ở điểm xuất phát
-            Lives = MaxLives;
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player == null) return;
-            SpawnPoint = player.transform.position;
-            if (!Positions.TryGetValue(scene.name, out float[] xs)) return;
-            foreach (float x in xs) Spawn(x);
-        };
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // mỗi lần vào (hoặc chơi lại) một màn: đủ mạng, hồi sinh ở điểm xuất phát
+        Lives = MaxLives;
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
+        SpawnPoint = player.transform.position;
+        if (!Positions.TryGetValue(scene.name, out float[] xs)) return;
+        foreach (float x in xs) Spawn(x);
     }
 
     static void Spawn(float x)

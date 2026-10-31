@@ -7,7 +7,10 @@ public class Fx : MonoBehaviour
 {
     static Fx instance;
     AudioSource sfx, music;
-    AudioClip jumpClip, hurtClip, explodeClip, coinClip, hitClip, sprayClip, musicClip;
+    AudioClip jumpClip, hurtClip, explodeClip, coinClip, hitClip, sprayClip;
+    AudioClip menuClip, woodlandClip, lakesideClip, caveClip;
+    static AudioClip jingleClip, jingleClipS, jingleClipL;
+    AudioClip currentTrack;
     Material particleMat;
     const int Rate = 22050;
     readonly Queue<FxParticle> availableParticles = new Queue<FxParticle>(24);
@@ -35,9 +38,17 @@ public class Fx : MonoBehaviour
         sprayClip = Tone("spray", 0.3f, 3000f, 2500f, 0.97f);
         hurtClip = Tone("hurt", 0.25f, 400f, 120f, 0.5f);
         explodeClip = Tone("explode", 0.5f, 120f, 40f, 1f);
-        musicClip = Music();
-        music.clip = musicClip;
-        music.Play();
+        menuClip = Theme(new[] { 0, 4, 7, 12, 7, 4, 0, 4, 5, 9, 12, 9, 5, 4, 2, 0 },
+            new[] { 0, 0, -3, -3, -5, -5, -3, -3 }, 0.2f, 0.3f, 0.3f);
+        woodlandClip = Theme(new[] { 0, 4, 7, 4, 9, 7, 4, 2, 0, 4, 7, 12, 11, 7, 4, 2 },
+            new[] { 0, 0, -3, -3, -7, -7, -5, -5 }, 0.2f, 0.25f, 0.25f);
+        lakesideClip = Theme(new[] { 4, 7, 9, 7, 4, 0, 2, 5, 9, 5, 2, -3, 4, 7, 12, 7 },
+            new[] { 0, 0, -5, -5, -3, -3, -7, -7 }, 0.24f, 0.8f, 0.3f);
+        caveClip = Theme(new[] { 0, 3, 7, 3, 8, 7, 3, 0, 0, 3, 8, 12, 11, 8, 3, 2 },
+            new[] { -12, -12, -9, -9, -14, -14, -12, -12 }, 0.16f, 0.1f, 0.12f);
+        jingleClip = Theme(new[] { 0, 4, 7, 12, 16, 19, 24, 19, 16, 12, 7, 12 },
+            new int[12], 0.11f, 0.95f, 0.9f);
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
         particleMat = new Material(Shader.Find("Sprites/Default"));
         for (int i = 0; i < 8; i++) availableParticles.Enqueue(CreateParticle());
@@ -116,12 +127,9 @@ public class Fx : MonoBehaviour
         return c;
     }
 
-    // vòng nhạc nền ngắn: bass + giai điệu
-    static AudioClip Music()
+    // vòng nhạc nền ngắn: bass + giai điệu (detune = quãng nhỏ cho màu sắc khác nhau)
+    static AudioClip Theme(int[] melody, int[] bass, float step, float detune, float sustain)
     {
-        int[] melody = { 0, 4, 7, 4, 9, 7, 4, 2, 0, 4, 7, 12, 11, 7, 4, 2 };
-        int[] bass = { 0, 0, -3, -3, -7, -7, -5, -5 };
-        float step = 0.2f;
         int perStep = (int)(Rate * step);
         int n = perStep * melody.Length;
         float[] data = new float[n];
@@ -131,16 +139,49 @@ public class Fx : MonoBehaviour
             int s = i / perStep;
             float local = (float)(i % perStep) / perStep;
             float fm = 440f * Mathf.Pow(2f, melody[s] / 12f);
-            float fb = 110f * Mathf.Pow(2f, bass[s / 2] / 12f);
+            float fb = 110f * Mathf.Pow(2f, (bass.Length > 0 ? bass[s / 2 % bass.Length] : melody[s] / 2) / 12f);
             pm += fm / Rate;
             pb += fb / Rate;
-            float m = (Mathf.Repeat(pm, 1f) < 0.25f ? 1f : -1f) * (1f - local) * 0.15f;
+            float env = 1f - local;
+            float m = (Mathf.Repeat(pm, 1f) < 0.25f ? 1f : -1f) * Mathf.Lerp(env, 1f, 1f - sustain) * 0.15f;
             float b = (Mathf.Repeat(pb, 1f) < 0.5f ? 1f : -1f) * 0.12f;
             data[i] = m + b;
         }
-        AudioClip c = AudioClip.Create("music", n, 1, Rate, false);
+        AudioClip c = AudioClip.Create("theme", n, 1, Rate, false);
         c.SetData(data, 0);
         return c;
+    }
+
+    static AudioClip Music() => Theme(new[] { 0, 4, 7, 4, 9, 7, 4, 2, 0, 4, 7, 12, 11, 7, 4, 2 },
+        new[] { 0, 0, -3, -3, -7, -7, -5, -5 }, 0.2f, 0.25f, 0.25f);
+
+    // chọn nhạc theo scene: menu 1 bài, mỗi màn 1 màu âm riêng, mini-game dùng bài menu
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        int level = AdventureProgress.LevelNumber(scene.name);
+        AudioClip want = scene.buildIndex == 0 || level <= 0 ? menuClip
+            : level == 1 ? woodlandClip
+            : level == 2 ? lakesideClip
+            : level == 3 ? caveClip : menuClip;
+        PlayTrack(want);
+    }
+
+    static void PlayTrack(AudioClip clip)
+    {
+        if (instance == null || clip == null || instance.currentTrack == clip) return;
+        instance.currentTrack = clip;
+        instance.music.clip = clip;
+        instance.music.Play();
+    }
+
+    // jingle chiến thắng ngắn (dùng khi boss đầu hàng / qua màn)
+    public static void WinJingle(bool big)
+    {
+        if (instance == null) return;
+        if (big && jingleClipL == null) jingleClipL = Theme(
+            new[] { 0, 4, 7, 12, 16, 19, 24, 19, 16, 12, 19, 24 }, new int[12], 0.13f, 0.95f, 0.85f);
+        Play(big ? jingleClipL : (jingleClipS ?? (jingleClipS = Theme(
+            new[] { 0, 4, 7, 12, 16, 12, 7, 12 }, new int[12], 0.12f, 0.95f, 0.85f))), 0.9f);
     }
 
     // âm lượng (0..1), lưu trong PlayerPrefs, chỉnh ở menu chính

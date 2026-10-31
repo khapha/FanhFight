@@ -20,8 +20,8 @@ public class GameMaster : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Hightext.text = ("HighScore: " + PlayerPrefs.GetInt("highscore"));
         highscore = PlayerPrefs.GetInt("highscore", 0);
+        if (Hightext != null) Hightext.text = ("HighScore: " + highscore);
 
         if (PlayerPrefs.HasKey("points"))
         {

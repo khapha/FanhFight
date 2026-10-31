@@ -29,9 +29,10 @@ public class MainMenu : MonoBehaviour
         playButton = ActionButton(card, "Adventure", 85, PlayGame, true);
         Button smash = ActionButton(card, "Slipper Smash", 10, () => SceneManager.LoadScene("MiniSmash"));
         Button garden = ActionButton(card, "Flower Garden", -65, () => SceneManager.LoadScene("MiniSpray"));
-        helpButton = ActionButton(card, "How to Play", -140, HowToPlay);
-        Button quit = MiniUI.MakeButton(card, "Quit", Vector2.one * 0.5f, new Vector2(0, -225), new Vector2(150, 42), Quit);
-        menuButtons = new[] { playButton, smash, garden, helpButton, quit };
+        Button diary = ActionButton(card, "Butterfly Diary", -140, ShowDiary);
+        helpButton = ActionButton(card, "How to Play", -215, HowToPlay);
+        Button quit = MiniUI.MakeButton(card, "Quit", Vector2.one * 0.5f, new Vector2(160, -283), new Vector2(150, 42), Quit);
+        menuButtons = new[] { playButton, smash, garden, diary, helpButton, quit };
         MiniUI.Select(playButton);
     }
 
@@ -100,6 +101,33 @@ public class MainMenu : MonoBehaviour
         }
         ActionButton(card, "Back", -230, CloseModal);
         MiniUI.Select(selected);
+    }
+
+    // Nhật ký bướm: liệt kê các chú bướm đã cứu, đủ 8 chú mở tiệc hóa hoa
+    public void ShowDiary()
+    {
+        if (modal != null) return;
+        Transform card = OpenModal("DiaryPanel", returnFocus);
+        Label(card, "Butterfly Diary", 34, new Vector2(0, 245));
+        string body = Diary.Rescued == 0
+            ? "No butterflies yet!\nSquish a roach kindly\nand it turns into a friend :)"
+            : "";
+        for (int i = 0; i < Mathf.Max(Diary.Rescued, 1) && i < 12; i++)
+            body += (Diary.Rescued > i ? "~" : "") + "Butterfly " + (i + 1) + ": " + Diary.DisplayName(i) + "\n";
+        TextMeshProUGUI list = Label(card, body, 21, new Vector2(0, 85));
+        list.rectTransform.sizeDelta = new Vector2(500, 250);
+        Label(card, Diary.Rescued + " rescued - " + (Diary.PartyUnlocked ? "PARTY TIME!" : "8 unlocks the party"), 18, new Vector2(0, -95));
+        if (Diary.PartyUnlocked)
+            ActionButton(card, "Butterfly Party!", -155, StartButterflyParty, true);
+        ActionButton(card, "Back", -230, CloseModal);
+        MiniUI.Select(card.GetComponentInChildren<Button>());
+    }
+
+    // TIỆC HÓA HOA: scene riêng toàn bướm + hoa + nhạc tiệc, chỉ để thưởng thức
+    void StartButterflyParty()
+    {
+        CloseModal();
+        SceneManager.LoadScene("ButterflyParty");
     }
 
     public void HowToPlay()

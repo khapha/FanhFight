@@ -14,6 +14,7 @@ public class GameOverUI : MonoBehaviour
     {
         if (IsShowing) return;
         GameSession.Finish();
+        Fx.WinJingle(true); // fanfare lớn cho màn YOU WIN
 
         GameObject root = new GameObject("GameOverUI");
         GameOverUI ui = root.AddComponent<GameOverUI>();

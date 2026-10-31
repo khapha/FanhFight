@@ -93,16 +93,24 @@ public static class TestBuild
             Sprite s = make();
             if (s == null || s.rect.width <= 0) throw new System.Exception("Quest sprite generation failed.");
         }
-        Debug.Log("QUEST PASS 1/5: code-generated sprites (key, gate, orb, crown, butterfly).");
+        Debug.Log("QUEST PASS 1/6: code-generated sprites (key, gate, orb, crown, butterfly).");
 
-        // 2) quest state math
+        // 2) quest state math + butterfly diary counters
         System.Action reset = () =>
         {
             PlayerPrefs.DeleteKey("dashUnlocked");
             for (int i = 1; i <= 3; i++) PlayerPrefs.DeleteKey("adventureSecret" + i);
             PlayerPrefs.DeleteKey("adventureUnlocked");
+            Diary.Reset();
         };
         reset();
+        Diary.Reset();
+        int beforeRescued = Diary.Rescued;
+        string first = Diary.Rescue();
+        string second = Diary.Rescue("tester");
+        if (Diary.Rescued != beforeRescued + 2 || first == second || string.IsNullOrEmpty(first))
+            throw new System.Exception("Butterfly diary rescue counting is broken.");
+        Debug.Log("QUEST PASS 2a/6: butterfly diary counts rescues (" + first + ", " + second + ").");
         if (QuestState.ReadyToFinish(1)) throw new System.Exception("Level 1 should not be finishable without keys.");
         for (int i = 0; i < QuestState.KeysRequired - 1; i++) QuestState.CollectKey();
         if (QuestState.ReadyToFinish(1)) throw new System.Exception("Gate should require all keys.");
@@ -114,12 +122,12 @@ public static class TestBuild
         QuestState.UnlockDash();
         if (!QuestState.DashUnlocked) throw new System.Exception("DashUnlocked should follow the saved flag.");
         reset();
-        Debug.Log("QUEST PASS 2/5: gate rules (keys, boss requirement, dash persistence).");
+        Debug.Log("QUEST PASS 2b/6: gate rules (keys, boss requirement, dash persistence).");
 
         // 3) objective text never shows stale boss hp after defeat
         if (string.IsNullOrEmpty(QuestState.ObjectiveText) && QuestState.Level >= 1)
             throw new System.Exception("Objective text should describe the current goal.");
-        Debug.Log("QUEST PASS 3/5: HUD objective text.");
+        Debug.Log("QUEST PASS 3/6: HUD objective text.");
 
         // 4) walker factory keeps colliders on the right layers (uses the real Rigidbody2D path)
         GameObject go = new GameObject("WalkerProbe");

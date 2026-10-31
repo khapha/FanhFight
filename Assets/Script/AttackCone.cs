@@ -28,13 +28,9 @@ public class AttackCone : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             if (isLeft)
-            {
                 turret.Attack(false);
-            }
-            if (!isLeft)
-            {
+            else
                 turret.Attack(true);
-            }
         }
     }
 

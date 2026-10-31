@@ -29,7 +29,8 @@ public class Door : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             playerInside = true;
-            gm.InputText.text = Application.isMobilePlatform ? "Tap Enter to go through the door" : "Press E / Y to enter";
+            if (gm.InputText != null)
+                gm.InputText.text = Application.isMobilePlatform ? "Tap Enter to go through the door" : "Press E / Y to enter";
         }
     }
     private void OnTriggerStay2D(Collider2D collision)
@@ -57,7 +58,7 @@ public class Door : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             playerInside = false;
-            gm.InputText.text = ("");
+            if (gm.InputText != null) gm.InputText.text = ("");
         }
     }
     void savescore()

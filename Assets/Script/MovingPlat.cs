@@ -17,7 +17,9 @@ public class MovingPlat : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
         if (body != null) body.interpolation = RigidbodyInterpolation2D.Interpolate;
-        pause = GameObject.FindGameObjectWithTag("MainCamera").GetComponentInParent<PausedMenu>();
+        PausedMenu p = GameObject.FindGameObjectWithTag("MainCamera")?.GetComponentInParent<PausedMenu>();
+        if (p == null) p = FindAnyObjectByType<PausedMenu>();
+        pause = p;
     }
 
     // Update is called once per frame

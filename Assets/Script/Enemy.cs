@@ -37,11 +37,12 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        // scene mini-game không có Enemy, nhưng phòng khi prefab bị thả nhả: thiếu Player thì đứng im
+        if (player == null) return;
         FlyAnimator.SetBool("Fly", fly);
         //distance to player
         float distToPlayer = Vector2.Distance(transform.position, player.transform.position);
        
-
         if(distToPlayer < argoRange)
         {
             //chase player
@@ -70,7 +71,7 @@ public class Enemy : MonoBehaviour
         float dirX = Mathf.Sign(player.transform.position.x - transform.position.x);
         if (retreatTimer > 0)
         {
-            retreatTimer -= Time.deltaTime;
+            retreatTimer -= Time.fixedDeltaTime;
             dirX = -dirX;
         }
         // chỉ bay quanh độ cao ban đầu, không chui xuống đất

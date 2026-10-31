@@ -77,8 +77,8 @@ public class Roach : MonoBehaviour
             // dội lại ở mép màn hình (chỉ khi đã vào hẳn bên trong)
             if (area.Contains(transform.position))
             {
-                if (pos.x < area.xMin || pos.x > area.xMax) velocity.x = -velocity.x;
-                if (pos.y < area.yMin || pos.y > area.yMax) velocity.y = -velocity.y;
+                if (pos.x < area.xMin || pos.x > area.xMax) { velocity.x = -velocity.x; pos.x = transform.position.x; }
+                if (pos.y < area.yMin || pos.y > area.yMax) { velocity.y = -velocity.y; pos.y = transform.position.y; }
             }
         }
         else if (!area.Contains(pos) && (pos - area.center).magnitude > area.size.magnitude * 0.7f)

@@ -23,7 +23,8 @@ public class FallingPlat : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.collider.CompareTag("Player") && !falling)
+        // chỉ đếm va chạm vật lý thật, không phải trigger chạm nhẹ
+        if (!col.collider.isTrigger && col.collider.CompareTag("Player") && !falling)
         {
             StartCoroutine(fall());
         }

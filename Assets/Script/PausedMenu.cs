@@ -31,6 +31,7 @@ public class PausedMenu : MonoBehaviour
     void Update()
     {
         if (GameOverUI.IsShowing) return;
+        if (pauseUI == null) return;
         if (GameInput.Pause.WasPressedThisFrame()) TogglePause();
     }
     public void TogglePause()
@@ -51,7 +52,7 @@ public class PausedMenu : MonoBehaviour
     {
         GameSession.Resume();
         pause = false;
-        pauseUI.SetActive(false);
+        if (pauseUI != null) pauseUI.SetActive(false);
         ClearSelection();
     }
     // bỏ chọn nút, để phím Space (chém) không bấm nhầm Restart/Quit khi đang chơi

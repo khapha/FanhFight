@@ -215,12 +215,14 @@ public class RoachKing : MonoBehaviour
     {
         defeated = true;
         QuestState.RunSquished++;
+        Diary.Rescue("the Roach King"); // cả nhà bướm đón vua về
         body.linearVelocity = Vector2.zero;
         GameMaster gm = GameObject.FindGameObjectWithTag("gamemaster")?.GetComponent<GameMaster>();
         if (gm != null) gm.points += 50;
         alert.gameObject.SetActive(false);
         Fx.Popup(transform.position + Vector3.up * 1.8f, "I give up!", CuteTheme.Mint);
         Fx.Explode();
+        Fx.WinJingle(false); // kèn chiến thắng nho nhỏ khi vua đầu hàng
 
         Vector3 baseScale = transform.localScale;
         float t = 0;

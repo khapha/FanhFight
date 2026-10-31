@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerAttack : MonoBehaviour
 {
     public float acttackdelay = 0.3f;
+    public float attackTime = 0.3f;
     public bool attacking = false;
     public bool battack = false;
     public SoundManager sound;
@@ -39,7 +40,7 @@ public class PlayerAttack : MonoBehaviour
         {
             attacking = true;
             trigger.enabled = true;
-            acttackdelay = 0.3f;
+            acttackdelay = attackTime;   // giữ giá trị hiệu chỉnh từ Inspector
             Fx.Spray(transform.position, transform.localScale.x > 0);
 
         }
