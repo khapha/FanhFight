@@ -19,6 +19,7 @@ public class SoundManager : MonoBehaviour
     }
     public void Playsound(string clip)
     {
+        if (adirs == null) return;
         switch (clip)
         {
             case "coins":

@@ -30,7 +30,7 @@ public class RoachKing : MonoBehaviour
     {
         if (!AdventureProps.TryGround(x, out float y)) return;
         GameObject go = new GameObject("RoachKing");
-        go.transform.position = new Vector2(x, y + 0.5f);
+        go.transform.position = new Vector2(x, y + 1.45f);
         go.tag = "Enemy";
         RoachKing king = go.AddComponent<RoachKing>();
         king.arenaLeft = arenaLeft;
@@ -70,14 +70,14 @@ public class RoachKing : MonoBehaviour
 
         BoxCollider2D solid = gameObject.AddComponent<BoxCollider2D>();
         // sprite boss cao ~2.9 unit (scale 2.6), collider đặt dưới tâm để chân chạm đất
-        solid.size = new Vector2(1.5f, 0.75f);
-        solid.offset = new Vector2(0, -1.05f);
+        solid.size = new Vector2(0.95f, 0.9f);
+        solid.offset = new Vector2(0, -0.1f);
         BoxCollider2D sensor = gameObject.AddComponent<BoxCollider2D>();
         // sensor chồng-trúng: phủ từ chân lên tầm ngực/đầu (vùng dép vung ở y~0.7)
         // để nhát chém trúng boss; vẫn là trigger nên không đẩy player
         sensor.isTrigger = true;
-        sensor.size = new Vector2(0.9f, 0.9f);
-        sensor.offset = new Vector2(0, 0.55f);
+        sensor.size = new Vector2(1.2f, 1.05f);
+        sensor.offset = Vector2.zero;
     }
 
     void Start()

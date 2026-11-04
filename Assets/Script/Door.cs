@@ -40,6 +40,12 @@ public class Door : MonoBehaviour
     }
     void EnterDoor()
     {
+        int level = GameHUD.LevelNumber(SceneManager.GetActiveScene().name);
+        if (level > 0 && !QuestState.ReadyToFinish(level))
+        {
+            GameHUD.Toast(QuestState.BlockerHint());
+            return;
+        }
         savescore();
         gm.SaveHighscore();
         AdventureProgress.Complete(GameHUD.LevelNumber(SceneManager.GetActiveScene().name), gm.points - gm.EntryPoints);

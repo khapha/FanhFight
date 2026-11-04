@@ -22,6 +22,12 @@ public static class QuestState
     public static bool DashUnlocked => PlayerPrefs.GetInt("dashUnlocked", 0) == 1;
     public static bool HasAllKeys => KeysCollected >= KeysRequired;
 
+    public static void BeginRun()
+    {
+        RunSquished = 0;
+        RunSecrets = 0;
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Init()
     {
@@ -37,7 +43,7 @@ public static class QuestState
         BossHp = -1;
         MiniBossDefeated = false;
         // lượt chơi mới bắt đầu từ màn 1: đếm lại thành tích chạy nước
-        if (Level == 1) { RunSquished = 0; RunSecrets = 0; }
+        if (Level == 1) BeginRun();
     }
 
     public static void CollectKey()

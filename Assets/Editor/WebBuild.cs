@@ -7,6 +7,11 @@ using UnityEngine;
 // Build bản web (WebGL) vào thư mục WebBuild, chạy được trên GitHub Pages
 public static class WebBuild
 {
+    public static void Checked()
+    {
+        TestBuild.Quest();
+        Build();
+    }
     public static void Build()
     {
         // GitHub Pages không gửi header nén, nên để trình duyệt tự giải nén

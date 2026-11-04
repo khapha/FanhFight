@@ -91,6 +91,8 @@ public class GameHUD : MonoBehaviour
         titleText.rectTransform.anchoredPosition = Vector2.zero;
         // phải trên: điểm cao nhất
         bestText = MakeText("", 26, new Vector2(1, 1), new Vector2(-30, -30), TextAlignmentOptions.Right);
+        CuteTheme.Card(content, new Vector2(1, 1), new Vector2(-138, -126), new Vector2(252, 40));
+        MakeText(WeaponLoadout.Name, 20, new Vector2(1, 1), new Vector2(-30, -126), TextAlignmentOptions.Right);
         // dưới best: dòng nhiệm vụ
         questText = MakeText("", 22, new Vector2(1, 1), new Vector2(-30, -84), TextAlignmentOptions.Right);
         questText.color = new Color(0.4f, 0.34f, 0.16f);

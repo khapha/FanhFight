@@ -93,14 +93,40 @@ public class MainMenu : MonoBehaviour
             string status = !unlocked ? "Locked" : AdventureProgress.IsCompleted(level)
                 ? "Completed - Best: " + AdventureProgress.BestScore(level) : "Ready to explore";
             Button b = MiniUI.MakeButton(card, level + ". " + AdventureProgress.Titles[level - 1] + "\n" + status,
-                Vector2.one * 0.5f, new Vector2(0, 105 - (i - 1) * 105), new Vector2(500, 86),
-                () => AdventureProgress.StartLevel(level));
+                Vector2.one * 0.5f, new Vector2(0, 110 - (i - 1) * 88), new Vector2(500, 76),
+                () => ChooseWeapon(level));
             b.GetComponentInChildren<TMP_Text>().fontSize = 25;
             b.interactable = unlocked;
             if (unlocked) selected = b;
         }
         ActionButton(card, "Back", -230, CloseModal);
         MiniUI.Select(selected);
+    }
+
+    void ChooseWeapon(int level)
+    {
+        CloseModal();
+        Transform card = OpenModal("WeaponSelect", playButton);
+        Label(card, "Choose your tool", 36, new Vector2(0, 240));
+        Label(card, AdventureProgress.Titles[level - 1], 22, new Vector2(0, 192));
+        ToolChoice(card, level, WeaponLoadout.Kind.SprayBottle, -136, WeaponArt.Bottle,
+            "Spray Bottle", "Long mint mist\nHold to spray");
+        ToolChoice(card, level, WeaponLoadout.Kind.Slipper, 136, MiniArt.Slipper,
+            "Slipper", "Close-up slap\nHold to swing");
+        Button back = ActionButton(card, "Back", -230, () => { CloseModal(); PlayGame(); });
+        Button[] choices = card.GetComponentsInChildren<Button>();
+        MiniUI.Select(choices[WeaponLoadout.IsSpray ? 0 : 1]);
+    }
+
+    static void ToolChoice(Transform card, int level, WeaponLoadout.Kind kind, float x, Sprite sprite, string title, string description)
+    {
+        Button button = MiniUI.MakeButton(card, "", Vector2.one * 0.5f, new Vector2(x, 0),
+            new Vector2(250, 330), () => { WeaponLoadout.Select(kind); AdventureProgress.StartLevel(level); });
+        button.name = title;
+        CuteTheme.Button(button, WeaponLoadout.Selected == kind);
+        Decoration(button.transform, sprite, new Vector2(0, 65), new Vector2(75, 120));
+        Label(button.transform, title, 25, new Vector2(0, -30)).rectTransform.sizeDelta = new Vector2(240, 50);
+        Label(button.transform, description, 19, new Vector2(0, -94)).rectTransform.sizeDelta = new Vector2(240, 85);
     }
 
     // Nhật ký bướm: liệt kê các chú bướm đã cứu, đủ 8 chú mở tiệc hóa hoa
@@ -137,7 +163,7 @@ public class MainMenu : MonoBehaviour
         Label(card, "Ready for adventure?", 36, new Vector2(0, 240));
         TextMeshProUGUI help = Label(card,
             "Move: A / D or Left / Right arrows\nDouble jump: W / Up (press twice)\n"
-            + "Spray: Space / J    |    Enter door: E\nDash: Shift / K (after the blue orb)\n"
+            + "Spray / Slap: Space / J    |    Enter door: E\nDash: Shift / K (after the blue orb)\n"
             + "Drop down: S    |    Pause: Esc\n"
             + "Controller: A Jump, X Spray, Y Enter\nStart: Pause\n"
             + "Find 3 keys, bop the Roach King, open the gate!",

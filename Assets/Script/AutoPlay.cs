@@ -13,13 +13,17 @@ using UnityEngine.SceneManagement;
 // Chạy: FanhFight.exe -cute-autoplay <thư-mục-ảnh> (cần cửa sổ visible để chụp).
 public class AutoPlay : MonoBehaviour
 {
-    static readonly string[] PrefsKeys =
+    static IEnumerable<string> PrefsKeys
     {
-        "points", "highscore", "dashUnlocked", "adventureUnlocked",
-        "adventureComplete1", "adventureComplete2", "adventureComplete3",
-        "adventureBest1", "adventureBest2", "adventureBest3",
-        "adventureSecret1", "adventureSecret2", "adventureSecret3",
-    };
+        get
+        {
+            foreach (string key in new[] { "points", "highscore", "dashUnlocked", "adventureUnlocked", "diaryRescued", "adventureWeapon" })
+                yield return key;
+            for (int level = 1; level <= AdventureProgress.Count; level++)
+                foreach (string prefix in new[] { "adventureComplete", "adventureBest", "adventureSecret" })
+                    yield return prefix + level;
+        }
+    }
 
     readonly Dictionary<string, int> prefBackup = new Dictionary<string, int>();
     readonly HashSet<string> prefHad = new HashSet<string>();
@@ -63,18 +67,23 @@ public class AutoPlay : MonoBehaviour
             PlayerPrefs.SetInt("adventureUnlocked", Mathf.Max(PlayerPrefs.GetInt("adventureUnlocked", 1), onlyLevel));
         // yield không được nằm trong try-catch, nên tự chạy coroutine con bằng MoveNext
         System.Exception error = null;
-        IEnumerator play = Play(output, onlyLevel);
-        while (true)
+        // Flatten nested routines so failures in movement/combat also restore saves and exit.
+        Stack<IEnumerator> routines = new Stack<IEnumerator>();
+        routines.Push(Play(output, onlyLevel));
+        while (routines.Count > 0)
         {
             bool has;
+            IEnumerator play = routines.Peek();
             try { has = play.MoveNext(); }
             catch (System.Exception e) { error = e; break; }
-            if (!has) break;
-            yield return play.Current;
+            if (!has) { (routines.Pop() as System.IDisposable)?.Dispose(); continue; }
+            if (play.Current is IEnumerator child && !(child is CustomYieldInstruction)) routines.Push(child);
+            else yield return play.Current;
         }
-        if (error != null) Debug.Log("AUTOPLAY FAIL: " + error.Message);
+        while (routines.Count > 0) (routines.Pop() as System.IDisposable)?.Dispose();
+        if (error != null) Debug.Log("AUTOPLAY FAIL: " + error);
         RestorePrefs();
-        Application.Quit();
+        Application.Quit(error == null ? 0 : 1);
     }
 
     IEnumerator Play(string output, int onlyLevel)
@@ -88,7 +97,23 @@ public class AutoPlay : MonoBehaviour
         yield return Shot(output, "a1-levels.png");
         int first = onlyLevel > 0 ? onlyLevel : 1;
         int last = onlyLevel > 0 ? onlyLevel : AdventureProgress.Count;
-        AdventureProgress.StartLevel(first);
+        GameObject.Find("LevelSelect").GetComponentsInChildren<UnityEngine.UI.Button>()[first - 1].onClick.Invoke();
+        yield return null;
+        yield return Shot(output, "a2-tools.png");
+        bool slipper = System.Environment.CommandLine.Contains("-cute-slipper");
+        GameObject.Find("WeaponSelect").GetComponentsInChildren<UnityEngine.UI.Button>()[slipper ? 1 : 0].onClick.Invoke();
+        if (WeaponLoadout.IsSpray == slipper) throw new System.Exception("Tool selection was not applied.");
+        Debug.Log("AUTOPLAY PASS: selected " + WeaponLoadout.Name + " through menu");
+
+        if (System.Environment.CommandLine.Contains("-cute-tools-only"))
+        {
+            yield return WaitForLevel(first);
+            yield return new WaitForSecondsRealtime(3.5f);
+            FindAnyObjectByType<Player>().GodMode = true;
+            yield return CheckWeapon(output, first);
+            Debug.Log("AUTOPLAY COMPLETE: held-tool pose, grip and hitbox checks.");
+            yield break;
+        }
 
         for (int level = first; level <= last; level++)
         {
@@ -124,6 +149,12 @@ public class AutoPlay : MonoBehaviour
             yield return new WaitForSecondsRealtime(3f);
             yield return Shot(output, "a9-spray.png");
             Debug.Log("AUTOPLAY PASS: MiniSpray boots");
+            SceneManager.LoadScene("ButterflyParty");
+            yield return new WaitForSecondsRealtime(3f);
+            yield return Shot(output, "a10-party.png");
+            if (FindAnyObjectByType<ButterflyPartyScene>() == null)
+                throw new System.Exception("Butterfly Party failed to boot.");
+            Debug.Log("AUTOPLAY PASS: ButterflyParty boots");
         }
         Debug.Log("AUTOPLAY COMPLETE: " + (onlyLevel > 0 ? "level " + onlyLevel : "full adventure") + " played end to end.");
     }
@@ -156,6 +187,8 @@ public class AutoPlay : MonoBehaviour
         // smoke test riêng kiểm tra) - giúp buổi tự chơi đi trọn hành trình
         Player guarded = FindAnyObjectByType<Player>();
         if (guarded != null) guarded.GodMode = true;
+        yield return CheckWeapon(output, level);
+        yield return CheckBlockedExit("missing keys");
 
         // 1) orb dash (màn 1, chỉ khi chưa mở khóa vĩnh viễn)
         if (level == 1 && !QuestState.DashUnlocked)
@@ -213,6 +246,7 @@ public class AutoPlay : MonoBehaviour
         // 4) Vua Gián ở màn cuối / Gián Vũ Công ở màn Sunset Meadow
         if (level == QuestState.BossLevel)
         {
+            yield return CheckBlockedExit("undefeated king");
             if (FindAnyObjectByType<RoachKing>() == null)
                 throw new System.Exception("Roach King missing on the boss level.");
             yield return FightBoss();
@@ -223,8 +257,13 @@ public class AutoPlay : MonoBehaviour
         }
         if (level == QuestState.MiniBossLevel)
         {
+            yield return CheckBlockedExit("undefeated dancer");
             RoachDancer dancer = FindAnyObjectByType<RoachDancer>();
             if (dancer == null) throw new System.Exception("Roach Dancer missing on the mini-boss level.");
+            float stageY = AdventureProps.GroundYNear(dancer.transform.position.x);
+            if (float.IsNaN(stageY) || Mathf.Abs(dancer.transform.position.y - stageY) > 1.7f)
+                throw new System.Exception("Dancer drifted away from the stage before the fight.");
+            Debug.Log("AUTOPLAY PASS: dancer stays within reach of the stage");
             yield return DanceWith(dancer);
             if (!QuestState.MiniBossDefeated) throw new System.Exception("Dancer never took a bow.");
             Debug.Log("AUTOPLAY PASS: Roach Dancer took a bow");
@@ -286,8 +325,88 @@ public class AutoPlay : MonoBehaviour
             // lao vào thân vũ công: trigger chạm là một "bước nhảy" trúng thưởng
             TeleportPlayer(dancer.transform.position + Vector3.left * 0.9f);
             yield return new WaitForSecondsRealtime(0.7f);
+            if (dancer == null) yield break; // The bow can finish and destroy the actor during the wait.
             Debug.Log("AUTOPLAY dance hp=" + dancer.Hp + " dancerY=" + dancer.transform.position.y.ToString("F1"));
         }
+    }
+
+    IEnumerator CheckBlockedExit(string reason)
+    {
+        Door door = FindAnyObjectByType<Door>();
+        Player player = FindAnyObjectByType<Player>();
+        if (door == null || player == null) throw new System.Exception("Missing exit/player for blocked-door check.");
+        string scene = SceneManager.GetActiveScene().name;
+        int level = QuestState.Level;
+        int best = AdventureProgress.BestScore(level);
+        bool completed = AdventureProgress.IsCompleted(level);
+        Vector3 origin = player.transform.position;
+        TeleportPlayer(door.transform.position);
+        yield return new WaitForFixedUpdate();
+        yield return new WaitForFixedUpdate();
+        // Assert the real door overlap, so the test cannot pass because input missed it.
+        bool inside = (bool)typeof(Door).GetField("playerInside",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(door);
+        if (!inside) throw new System.Exception("Blocked-door test did not reach the door trigger.");
+        door.TryEnter();
+        yield return null;
+        if (SceneManager.GetActiveScene().name != scene || GameOverUI.IsShowing
+            || AdventureProgress.IsCompleted(level) != completed || AdventureProgress.BestScore(level) != best)
+            throw new System.Exception("Exit bypassed quest: " + reason);
+        TeleportPlayer(origin);
+        Debug.Log("AUTOPLAY PASS: exit blocked with " + reason + " on level " + level);
+    }
+
+    IEnumerator CheckWeapon(string output, int level)
+    {
+        Player player = FindAnyObjectByType<Player>();
+        PlayerAttack attack = player.GetComponent<PlayerAttack>();
+        Vector3 origin = player.transform.position;
+        for (int side = 0; side < 2; side++)
+        {
+            bool right = side == 0;
+            if ((player.transform.lossyScale.x > 0) != right) player.Flip();
+            float sign = right ? 1 : -1;
+            GameObject Probe(string name, float distance)
+            {
+                GameObject go = new GameObject(name);
+                go.tag = "Enemy";
+                go.transform.position = player.transform.position + new Vector3(sign * distance, WeaponLoadout.Height, 0);
+                go.AddComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
+                go.AddComponent<BoxCollider2D>().size = new Vector2(0.15f, 0.15f);
+                go.AddComponent<WeaponProbe>();
+                return go;
+            }
+            GameObject near = Probe("WeaponInRange", WeaponLoadout.Start + WeaponLoadout.Reach * 0.7f);
+            GameObject far = Probe("WeaponOutOfRange", WeaponLoadout.Start + WeaponLoadout.Reach + 0.5f);
+            try
+            {
+                attack.PlayerActtack(true);
+                yield return new WaitForSecondsRealtime(WeaponLoadout.IsSpray ? 0.2f : 0.26f);
+                attack.PlayerActtack(false);
+                PlayerVisuals visual = player.GetComponent<PlayerVisuals>();
+                if (visual == null || visual.GripError > 0.005f)
+                    throw new System.Exception("Tool handle detached from the character's hand.");
+                if (near.GetComponent<WeaponProbe>().Hits != 1 || far.GetComponent<WeaponProbe>().Hits != 0)
+                    throw new System.Exception("Tool hitbox/range failed: " + WeaponLoadout.Name + (right ? " right" : " left")
+                        + " near=" + near.GetComponent<WeaponProbe>().Hits + " far=" + far.GetComponent<WeaponProbe>().Hits
+                        + " attack=" + attack.trigger.bounds + " target=" + near.GetComponent<Collider2D>().bounds);
+                yield return Shot(output, "tool-" + level + "-" + WeaponLoadout.Name.Replace(" ", "") + (right ? "-right.png" : "-left.png"));
+                Debug.Log("AUTOPLAY PASS: " + WeaponLoadout.Name + " hits once within range " + (right ? "right" : "left"));
+            }
+            finally
+            {
+                attack.CancelAttack();
+                Destroy(near); Destroy(far);
+            }
+        }
+        if (player.transform.lossyScale.x < 0) player.Flip();
+        TeleportPlayer(origin);
+    }
+
+    class WeaponProbe : MonoBehaviour
+    {
+        public int Hits;
+        void Damage(int amount) { Hits++; }
     }
 
     IEnumerator FightBoss()

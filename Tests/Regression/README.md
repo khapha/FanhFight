@@ -19,11 +19,12 @@ PlayerPrefs disk persistence or a full Unity compilation.
 ## Unity 6000.6.7f1 playtest
 
 1. Open `Assets/Scenes/Scene 3.unity` and enter Play mode. Choose **Adventure**.
-   On a fresh save, only **Woodland** is available. Back/Esc restores menu focus.
+   On a fresh save, only **Woodland** is available. Choose a level, then choose
+   **Spray Bottle** or **Slipper**. Back returns to level selection.
 2. Finish the first level via its door. **Lakeside** unlocks, and campaign points
    carry across the transition. Return to the menu and select an unlocked level:
    run points start at zero, while completed levels and best scores remain.
-3. Complete the final level. Verify the win panel and clickable **Retry/Menu**.
+3. Complete all four levels, including **Sunset Meadow**. Verify the win panel and clickable **Retry/Menu**.
    Replaying a level with fewer points must preserve its previous personal best.
 4. Hold attack while taking lethal damage. The attack collider must turn off
    immediately and stay off during respawn/game over. Pause during respawn,
@@ -41,3 +42,23 @@ PlayerPrefs disk persistence or a full Unity compilation.
 
 Existing zero-size flowers are recovered when loading. Malformed save entries
 are skipped; the existing `garden` save format and unrelated player data remain.
+
+## Full runtime checks
+
+Build the development player with Unity's `-executeMethod TestBuild.VerifyAndBuild`.
+This runs the editor quest/sprite checks and preserves the PlayerPrefs keys those
+checks touch. The output is `TestBuild/Full/FanhFight.exe`.
+
+Run the player with `-cute-autoplay <absolute-screenshot-folder>` for the four-level
+smoke test. It follows the level/tool menu, exercises tool hitboxes in both
+directions, checks blocked exits, collects keys, defeats both bosses and boots
+the mini-games and Butterfly Party. It backs up/restores progress, diary and tool
+selection, and returns exit code 1 on a nested test failure.
+
+Use `-cute-slipper` for the slipper loadout and `-cute-autoplay-level 4` for a
+focused Sunset Meadow run. A visible window is required for screenshots;
+`-batchmode -nographics` runs only the logic/physics checks.
+
+The bot uses god mode and fallback teleports. A passing run verifies interaction
+and progression, not that every jump is reachable by an unaided player, nor
+physical multitouch/mobile performance.

@@ -52,7 +52,7 @@ public class TouchButtons : MonoBehaviour
         Hold(">", new Vector2(0, 0), new Vector2(175, 72), held => { right = held; Move(); });
         Hold("Jump", new Vector2(1, 0), new Vector2(-65, 72), player.Jumping);
         PlayerAttack attack = player.GetComponent<PlayerAttack>();
-        if (attack != null) Hold("Spray", new Vector2(1, 0), new Vector2(-175, 72), attack.PlayerActtack);
+        if (attack != null) Hold(WeaponLoadout.Action, new Vector2(1, 0), new Vector2(-175, 72), attack.PlayerActtack);
         Hold("Down", new Vector2(0, 0), new Vector2(65, 180), held => DownHeld = held);
         MiniUI.MakeButton(rt, "Enter", new Vector2(1, 0), new Vector2(-175, 180), new Vector2(140, 76), () =>
         {

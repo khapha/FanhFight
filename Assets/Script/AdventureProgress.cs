@@ -27,6 +27,7 @@ public static class AdventureProgress
         int index = SceneUtility.GetBuildIndexByScenePath("Assets/Scenes/" + Scenes[level - 1] + ".unity");
         if (index < 0) return;
         // Selecting a level starts a fresh run; door transitions keep the run's points.
+        QuestState.BeginRun();
         PlayerPrefs.DeleteKey("points");
         PlayerPrefs.Save();
         GameSession.LoadScene(index);

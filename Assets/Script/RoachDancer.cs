@@ -11,7 +11,7 @@ public class RoachDancer : MonoBehaviour
     {
         if (!AdventureProps.TryGround(x, out float y)) return;
         GameObject go = new GameObject("RoachDancer");
-        go.transform.position = new Vector2(x, y + 0.5f);
+        go.transform.position = new Vector2(x, y + 1.15f);
         go.tag = "Enemy";
         go.AddComponent<RoachDancer>().stageLeft = stageLeft;
     }
@@ -20,7 +20,7 @@ public class RoachDancer : MonoBehaviour
     SpriteRenderer sr;
     int hp = QuestState.MiniBossMaxHp;
     bool done;
-    float stageLeft, stageWidth = 12f, moveTimer, faceCooldown;
+    float stageLeft, stageWidth = 12f, moveTimer, faceCooldown, stageY;
     float beat = 0.55f; // nhịp disco 110 BPM xấp xỉ
     float beatTimer;
     int danceStep;
@@ -33,6 +33,7 @@ public class RoachDancer : MonoBehaviour
         body.interpolation = RigidbodyInterpolation2D.Interpolate;
         body.freezeRotation = true;
         body.gravityScale = 0f; // collider là trigger nên không có sàn đỡ — tự trôi xuống void!
+        stageY = transform.position.y;
 
         sr = gameObject.AddComponent<SpriteRenderer>();
         sr.sprite = CuteArt.Roach(0);
@@ -54,8 +55,8 @@ public class RoachDancer : MonoBehaviour
         // sprite cao ~2.4 unit (scale 2.1): collider thấp ở chân.
         // LÀ TRIGGER: Vũ Công thân thiện, player chạm/đi xuyên qua = một "bước nhảy"
         // (solid + solid sẽ KHÔNG bao giờ fire OnTriggerEnter2D — bài học AttackTrigger)
-        solid.size = new Vector2(1.1f, 0.6f);
-        solid.offset = new Vector2(0, -0.85f);
+        solid.size = new Vector2(1.1f, 0.9f);
+        solid.offset = Vector2.zero;
         solid.isTrigger = true;
     }
 
@@ -80,12 +81,14 @@ public class RoachDancer : MonoBehaviour
         {
             beatTimer = 0f;
             danceStep = 1 - danceStep;
-            body.linearVelocity = new Vector2(0f, 2.6f); // nhún theo nhịp
             Fx.Burst(transform.position + Vector3.down * 0.8f, new Color(1f, 0.85f, 0.5f), 3, 1.2f, 0.18f);
         }
         float sway = Mathf.Sin(Time.time * 4.5f) * 1.4f;
         float targetX = Mathf.Clamp(stageLeft + stageWidth * 0.5f + sway, stageLeft + 1f, stageLeft + stageWidth - 1f);
-        body.linearVelocity = new Vector2((targetX - transform.position.x) * 2.2f, body.linearVelocity.y);
+        // No gravity: an upward impulse on every beat would send the dancer out of reach.
+        float targetY = stageY + Mathf.Abs(Mathf.Sin(Time.time * Mathf.PI / beat)) * 0.35f;
+        body.linearVelocity = new Vector2((targetX - transform.position.x) * 2.2f,
+            (targetY - transform.position.y) * 8f);
 
         // quay mặt về phía player cho "tương tác"
         GameObject p = GameObject.FindGameObjectWithTag("Player");
@@ -108,7 +111,19 @@ public class RoachDancer : MonoBehaviour
         if (done || touchCooldown > 0f || !GameSession.IsPlaying) return;
         if (collision.isTrigger || !collision.CompareTag("Player")) return;
         Player player = collision.GetComponent<Player>();
-        if (player == null) return;
+        if (player == null || !player.CanAct) return;
+        TakeDanceStep();
+    }
+
+    // Both selectable tools can join the dance, using the same cooldown as body contact.
+    void Damage(int amount)
+    {
+        if (amount > 0) TakeDanceStep();
+    }
+
+    void TakeDanceStep()
+    {
+        if (done || touchCooldown > 0f || !GameSession.IsPlaying) return;
         touchCooldown = 0.8f; // mỗi 0.8s tính một bước nhảy, không dồn hp trong lúc chồng lên nhau
         hp--;
         GameHUD.Toast(hp > 0 ? "The Roach Dancer spins! (" + hp + " left)" : "What a performance!");

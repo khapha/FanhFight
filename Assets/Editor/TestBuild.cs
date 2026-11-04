@@ -6,6 +6,11 @@ using System.Linq;
 // Bản build thử chỉ có một scene, để kiểm tra nhanh không cần qua menu
 public static class TestBuild
 {
+    public static void VerifyAndBuild()
+    {
+        Quest();
+        All();
+    }
     // Full local playtest build: includes the menu and all level transitions.
     public static void All()
     {
@@ -83,12 +88,41 @@ public static class TestBuild
     // Regression checks for the adventure expansion, run in the editor before building.
     public static void Quest()
     {
+        // Editor checks must not erase the player's unlocks or butterfly diary.
+        var saved = new System.Collections.Generic.Dictionary<string, int>();
+        var keys = new System.Collections.Generic.List<string> { "dashUnlocked", "diaryRescued", "adventureUnlocked" };
+        for (int level = 1; level <= AdventureProgress.Count; level++) keys.Add("adventureSecret" + level);
+        foreach (string key in keys) if (PlayerPrefs.HasKey(key)) saved[key] = PlayerPrefs.GetInt(key);
+        try { QuestCore(); }
+        finally
+        {
+            foreach (string key in keys)
+                if (saved.TryGetValue(key, out int value)) PlayerPrefs.SetInt(key, value);
+                else PlayerPrefs.DeleteKey(key);
+            PlayerPrefs.Save();
+        }
+    }
+
+    static void QuestCore()
+    {
+        PlayerActionPoses actions = Resources.Load<PlayerActionPoses>("PlayerActionPoses");
+        if (actions == null || actions.spray == null || actions.raised == null || actions.strike == null || actions.lowered == null)
+            throw new System.Exception("Character action poses are missing from Resources.");
+        foreach (Sprite frame in new[] { actions.spray, actions.raised, actions.strike, actions.lowered })
+        {
+            Vector2 grip = actions.Grip(frame);
+            if (grip.x < 0 || grip.y < 0 || grip.x >= frame.rect.width || grip.y >= frame.rect.height)
+                throw new System.Exception("Hand grip falls outside character frame: " + frame.name);
+        }
+        if (actions.Grip(actions.raised).y <= actions.Grip(actions.strike).y)
+            throw new System.Exception("Slipper windup must raise the character's hand.");
         // 1) sprite generators must not throw and must produce readable pixels
         foreach (System.Func<Sprite> make in new System.Func<Sprite>[] {
             () => KeyPickup.KeySprite, () => Gate.GateSprite, () => DashOrb.OrbSprite,
             () => RoachKing.CrownSprite, () => CuteArt.Butterfly,
             () => CuteArt.Roach(0), () => CuteArt.Roach(1),
-            () => CuteArt.KingRoach(0), () => CuteArt.KingRoach(1) })
+            () => CuteArt.KingRoach(0), () => CuteArt.KingRoach(1),
+            () => WeaponArt.Bottle, () => WeaponArt.Stream })
         {
             Sprite s = make();
             if (s == null || s.rect.width <= 0) throw new System.Exception("Quest sprite generation failed.");
@@ -99,7 +133,7 @@ public static class TestBuild
         System.Action reset = () =>
         {
             PlayerPrefs.DeleteKey("dashUnlocked");
-            for (int i = 1; i <= 3; i++) PlayerPrefs.DeleteKey("adventureSecret" + i);
+            for (int i = 1; i <= AdventureProgress.Count; i++) PlayerPrefs.DeleteKey("adventureSecret" + i);
             PlayerPrefs.DeleteKey("adventureUnlocked");
             Diary.Reset();
         };
@@ -140,7 +174,8 @@ public static class TestBuild
             go.AddComponent<RoachWalker>();
             BoxCollider2D[] boxes = go.GetComponents<BoxCollider2D>();
             if (boxes.Length == 0)
-                go.SendMessage("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance); // edit mode: Awake chưa chạy
+                typeof(RoachWalker).GetMethod("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    .Invoke(go.GetComponent<RoachWalker>(), null);
             boxes = go.GetComponents<BoxCollider2D>();
             if (boxes.Length != 2 || !boxes[1].isTrigger) throw new System.Exception("Walker needs a solid box plus a trigger sensor.");
         }
@@ -159,31 +194,44 @@ public static class TestBuild
             BoxCollider2D[] boxes = enemy.GetComponents<BoxCollider2D>();
             BoxCollider2D sensor = System.Array.Find(boxes, b => b.isTrigger);
             if (sensor == null) throw new System.Exception(label + " lost its trigger sensor.");
-            float swingBottom = 0.1f, swingTop = 1.3f; // slipper: player-local y 0.7, height 1.2
+            float swingBottom = 0.45f, swingTop = 1.65f; // Standing player: root ~0.5 above the floor, attack at +0.55.
             float scale = enemy.transform.localScale.y;
-            float bottom = (sensor.offset.y - sensor.size.y * 0.5f) * scale;
-            float top = (sensor.offset.y + sensor.size.y * 0.5f) * scale;
+            BoxCollider2D solid = System.Array.Find(boxes, b => !b.isTrigger);
+            float groundOffset = solid != null ? -(solid.offset.y - solid.size.y * 0.5f) * scale : 1.15f;
+            float bottom = groundOffset + (sensor.offset.y - sensor.size.y * 0.5f) * scale;
+            float top = groundOffset + (sensor.offset.y + sensor.size.y * 0.5f) * scale;
             if (top < swingBottom || bottom > swingTop)
                 throw new System.Exception(label + " sensor (" + bottom + ".." + top
-                    + ") never overlaps the slipper swing (0.1..1.3) - real attacks would miss.");
+                    + ") never overlaps a standing player's attack - real attacks would miss.");
         }
         GameObject slipper = new GameObject("SlipperProbeUnused");
         GameObject walkerGo = new GameObject("WalkerProbe2");
         GameObject kingGo = new GameObject("KingProbe");
+        GameObject dancerGo = new GameObject("DancerProbe");
         try
         {
             walkerGo.AddComponent<Rigidbody2D>();
             walkerGo.AddComponent<RoachWalker>();
-            walkerGo.SendMessage("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (walkerGo.GetComponents<BoxCollider2D>().Length == 0)
+                typeof(RoachWalker).GetMethod("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    .Invoke(walkerGo.GetComponent<RoachWalker>(), null);
             CheckSwingReach(walkerGo, "Roach walker");
 
             kingGo.AddComponent<Rigidbody2D>();
             kingGo.AddComponent<RoachKing>();
-            kingGo.SendMessage("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (kingGo.GetComponents<BoxCollider2D>().Length == 0)
+                typeof(RoachKing).GetMethod("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    .Invoke(kingGo.GetComponent<RoachKing>(), null);
             CheckSwingReach(kingGo, "Roach King");
+            dancerGo.AddComponent<Rigidbody2D>();
+            dancerGo.AddComponent<RoachDancer>();
+            if (dancerGo.GetComponents<BoxCollider2D>().Length == 0)
+                typeof(RoachDancer).GetMethod("Awake", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    .Invoke(dancerGo.GetComponent<RoachDancer>(), null);
+            CheckSwingReach(dancerGo, "Roach Dancer");
             Debug.Log("QUEST PASS 6/6: slipper swing reaches walker and king sensors.");
         }
-        finally { Object.DestroyImmediate(slipper); Object.DestroyImmediate(walkerGo); Object.DestroyImmediate(kingGo); }
+        finally { Object.DestroyImmediate(slipper); Object.DestroyImmediate(walkerGo); Object.DestroyImmediate(kingGo); Object.DestroyImmediate(dancerGo); }
         Debug.Log("ALL QUEST REGRESSION CHECKS PASSED.");
     }
 

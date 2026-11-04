@@ -258,7 +258,7 @@ public class Fx : MonoBehaviour
     {
         if (instance == null) return;
         Play(instance.sprayClip, 0.5f);
-        ParticleSystem ps = instance.TakeParticle(pos + new Vector3(right ? 0.6f : -0.6f, 0.15f, 0));
+        ParticleSystem ps = instance.TakeParticle(pos);
         if (ps == null) return;
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         var main = ps.main;
@@ -286,13 +286,14 @@ public class Fx : MonoBehaviour
         r.sortingOrder = 40;
         float dir = right ? 1f : -1f;
         ps.Play();
-        for (int i = 0; i < 28; i++)
+        for (int i = 0; i < 32; i++)
         {
             ParticleSystem.EmitParams e = new ParticleSystem.EmitParams();
-            e.velocity = new Vector3(dir * Random.Range(3f, 6f), Random.Range(-0.8f, 0.8f), 0);
-            e.startLifetime = Random.Range(0.25f, 0.4f);
-            e.startSize = Random.Range(0.15f, 0.3f);
-            e.startColor = new Color(0.75f, 1f, 0.8f);
+            float speed = Random.Range(5.5f, 8f);
+            e.velocity = new Vector3(dir * speed, Random.Range(-0.55f, 0.55f), 0);
+            e.startLifetime = WeaponLoadout.Reach / speed;
+            e.startSize = Random.Range(0.12f, 0.25f);
+            e.startColor = i % 3 == 0 ? Color.white : new Color(0.45f, 1f, 0.88f, 0.8f);
             ps.Emit(e, 1);
         }
     }

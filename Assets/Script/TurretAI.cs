@@ -31,9 +31,13 @@ public class TurretAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        sound = GameObject.FindGameObjectWithTag("Sounds").GetComponent<SoundManager>();
+        sound = GameObject.FindGameObjectWithTag("Sounds")?.GetComponent<SoundManager>();
         // tháp pháo nhân bản từ màn khác sẽ mất tham chiếu tới người chơi
-        if (target == null) target = GameObject.FindGameObjectWithTag("Player").transform;
+        if (target == null)
+        {
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null) target = p.transform;
+        }
 
     }
     public void Flip()
@@ -43,6 +47,7 @@ public class TurretAI : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
+        if (target == null) return;
         if ((target.transform.position.x > transform.position.x) && enemyfaceright)
         {
             Flip();
@@ -54,7 +59,7 @@ public class TurretAI : MonoBehaviour
     }
     void Update()
     {
-       
+        if (target == null) return;
         anim.SetBool("Awake", awake);
         anim.SetBool("LookRight", lookingRight);
         RangeCheck();
@@ -71,11 +76,17 @@ public class TurretAI : MonoBehaviour
         }
         if (curlHealth <= 0)
         {
-            sound.Playsound("destroy");
+            if (sound != null) sound.Playsound("destroy");
             Fx.Burst(transform.position, new Color(1f, 0.6f, 0.2f), 30, 5f, 0.3f);
             CameraRig.Shake(2f);
             Destroy(gameObject);
+            return;
         }
+        // chỉ bắn khi thấy mục tiêu; mất dấu thì ngưng và đợi đến khi vào tầm lại
+        if (awake)
+            bullettimer += Time.deltaTime;
+        else
+            bullettimer = 0;
     }
    
     void RangeCheck()
@@ -92,49 +103,33 @@ public class TurretAI : MonoBehaviour
     }
     public void Attack (bool attactright)
     {
-        bullettimer += Time.deltaTime;
-        if (bullettimer >= shootinterval)
+        // bullettimer đã được cộng trong Update khi awake; hàm này chỉ lo bắn theo đúng nhịp
+        if (bullettimer < shootinterval) return;
+        // bắn đón đầu: nhắm vào chỗ player sẽ tới khi đạn bay đến
+        Vector2 aim = target.transform.position;
+        Rigidbody2D trb = target.GetComponent<Rigidbody2D>();
+        if (trb != null)
         {
-            // bắn đón đầu: nhắm vào chỗ player sẽ tới khi đạn bay đến
-            Vector2 aim = target.transform.position;
-            Rigidbody2D trb = target.GetComponent<Rigidbody2D>();
-            if (trb != null)
-            {
-                float t = Vector2.Distance(transform.position, aim) / Mathf.Max(bulletspeed, 0.1f);
-                aim += trb.linearVelocity * Mathf.Min(t, 1f);
-            }
-            Vector2 direction = (aim - (Vector2)transform.position).normalized;
-            if (attactright)
-            {
-                GameObject bulletclone;
-                bulletclone = Instantiate(bullet, shootpointR.transform.position, shootpointR.transform.rotation) as GameObject;
-                if (!enemyfaceright)
-                {
-                    Vector3 s = bulletclone.transform.localScale;
-                    s.x *= -1;
-                    bulletclone.transform.localScale = s;
-                }
-                bulletclone.GetComponent<Rigidbody2D>().linearVelocity = direction * bulletspeed;
-                bullettimer = 0;
-            }
-            if (!attactright)
-            {
-                GameObject bulletclone;
-                bulletclone = Instantiate(bullet, shootpointL.transform.position, shootpointL.transform.rotation) as GameObject;
-                if (!enemyfaceright)
-                {
-                    Vector3 s = bulletclone.transform.localScale;
-                    s.x *= -1;
-                    bulletclone.transform.localScale = s;
-                }
-                bulletclone.GetComponent<Rigidbody2D>().linearVelocity = direction * bulletspeed;
-                bullettimer = 0;
-            }
+            float t = Vector2.Distance(transform.position, aim) / Mathf.Max(bulletspeed, 0.1f);
+            aim += trb.linearVelocity * Mathf.Min(t, 1f);
         }
+        Vector2 direction = (aim - (Vector2)transform.position).normalized;
+        Transform shootpoint = attactright ? shootpointR : shootpointL;
+        if (shootpoint == null) return;
+        GameObject bulletclone = Instantiate(bullet, shootpoint.position, shootpoint.rotation);
+        if (!enemyfaceright)
+        {
+            Vector3 s = bulletclone.transform.localScale;
+            s.x *= -1;
+            bulletclone.transform.localScale = s;
+        }
+        bulletclone.GetComponent<Rigidbody2D>().linearVelocity = direction * bulletspeed;
+        bullettimer = 0;
     }
     void Damage(int damage)
     {
         curlHealth -= damage;
-        gameObject.GetComponent<Animation>().Play("RedFlash");
+        Animation flash = gameObject.GetComponent<Animation>();
+        if (flash != null) flash.Play("RedFlash");
     }
 }
