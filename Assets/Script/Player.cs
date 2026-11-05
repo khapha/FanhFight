@@ -43,6 +43,7 @@ public class Player : MonoBehaviour
         baseSpeed = speed;
         baseMaxspeed = maxspeed;
         ourHealth = maxhealth;
+        ApplyNoFriction();
         sound = GameObject.FindGameObjectWithTag("Sounds").GetComponent<SoundManager>();
         gm = GameObject.FindGameObjectWithTag("gamemaster").GetComponent<GameMaster>();
     }
@@ -189,6 +190,22 @@ public class Player : MonoBehaviour
         }
 
     }
+    // Collider mặc định có ma sát 0.4: khi giữ phím đi vào mặt bên một khối cao
+    // (tháp pháo, bậc đất), lực đẩy ngang + ma sát giữ người chơi dính lơ lửng trên tường.
+    // Thân người chơi không cần ma sát: dừng trên đất đã có hãm 0.7 khi grounded,
+    // platform di động tự chở bằng vị trí (Grounded.cs).
+    static PhysicsMaterial2D noFriction;
+    void ApplyNoFriction()
+    {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        // chỉ để so sánh A/B trong bản dev: chạy lại hành vi cũ
+        if (System.Environment.CommandLine.Contains("-cute-wall-friction")) return;
+#endif
+        if (noFriction == null) noFriction = new PhysicsMaterial2D("PlayerNoFriction") { friction = 0f, bounciness = 0f };
+        foreach (Collider2D c in GetComponents<Collider2D>())
+            if (!c.isTrigger) c.sharedMaterial = noFriction;
+    }
+
     public void Djump()
     {
         doublejump = false;

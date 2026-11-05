@@ -31,7 +31,9 @@ public static class GameInput
         Interact = Button("Interact", "<Keyboard>/e", "<Gamepad>/buttonNorth");
         Down = Button("Down", "<Keyboard>/downArrow", "<Keyboard>/s", "<Gamepad>/dpad/down", "<Gamepad>/leftStick/down");
         Pause = Button("Pause", "<Keyboard>/escape", "<Gamepad>/start");
-        Restart = Button("Restart", "<Keyboard>/r", "<Gamepad>/buttonSouth");
+        // Gamepad A is left to the UI Submit action: binding it here too made A on a
+        // focused "Menu" button fire both Menu and Retry in the same frame.
+        Restart = Button("Restart", "<Keyboard>/r");
         Menu = Button("Menu", "<Keyboard>/m", "<Gamepad>/buttonEast");
     }
 

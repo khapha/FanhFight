@@ -30,7 +30,10 @@ public class CutePreview : MonoBehaviour
         int savedBest = PlayerPrefs.GetInt("highscore", 0);
         try
         {
-            yield return new WaitForSecondsRealtime(3);
+            yield return new WaitForSecondsRealtime(1.4f);
+            yield return Capture(output, "00-studio.png");
+            for (float w = 0; w < 6f && StudioIntro.Active; w += Time.unscaledDeltaTime) yield return null;
+            yield return new WaitForSecondsRealtime(0.6f);
             yield return Capture(output, "01-menu.png");
             FindAnyObjectByType<MainMenu>().HowToPlay();
             yield return new WaitForSecondsRealtime(0.5f);

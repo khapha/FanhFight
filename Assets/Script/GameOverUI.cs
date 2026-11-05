@@ -40,13 +40,13 @@ public class GameOverUI : MonoBehaviour
         string summary = "Score: " + points + "\nBest: " + highscore;
         if (title == "YOU WIN!")
             summary += "\nRoaches squished: " + QuestState.RunSquished
-                + "\nSecrets found: " + QuestState.RunSecrets + "/3";
+                + "\nSecrets found: " + QuestState.RunSecrets + "/" + AdventureProgress.Count;
         AddText(content, summary, 28, new Vector2(0, 35));
         Button retry = MiniUI.MakeButton(content, "Retry", new Vector2(0.5f, 0.5f),
             new Vector2(-120, -100), new Vector2(210, 64), () => ui.Load(SceneManager.GetActiveScene().buildIndex));
         MiniUI.MakeButton(content, "Menu", new Vector2(0.5f, 0.5f),
             new Vector2(120, -100), new Vector2(210, 64), () => ui.Load(0));
-        AddText(content, "R / A: Retry    M / B: Menu", 18, new Vector2(0, -170));
+        AddText(content, "R: Retry    M / B: Menu    A: Select", 18, new Vector2(0, -170));
         MiniUI.Select(retry);
     }
 

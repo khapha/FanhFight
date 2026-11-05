@@ -88,7 +88,14 @@ public class AutoPlay : MonoBehaviour
 
     IEnumerator Play(string output, int onlyLevel)
     {
-        yield return new WaitForSecondsRealtime(2.5f);
+        // màn giới thiệu studio phủ lên menu lúc mở game: chụp lại rồi chờ nó tự tắt
+        yield return new WaitForSecondsRealtime(1.4f);
+        if (!StudioIntro.Active) throw new System.Exception("Studio intro did not show on launch.");
+        yield return Shot(output, "a00-studio.png");
+        yield return WaitUntil(() => !StudioIntro.Active, 6f);
+        if (StudioIntro.Active) throw new System.Exception("Studio intro never finished.");
+        Debug.Log("AUTOPLAY PASS: Khapha studio intro shown and closed");
+        yield return new WaitForSecondsRealtime(0.6f);
         yield return Shot(output, "a0-menu.png");
         MainMenu menu = FindAnyObjectByType<MainMenu>();
         if (menu == null) throw new System.Exception("Main menu not found.");
@@ -131,7 +138,16 @@ public class AutoPlay : MonoBehaviour
             yield return WaitForLevel(level);
             yield return new WaitForSecondsRealtime(0.8f);
             Debug.Log("AUTOPLAY: playing level " + level);
+            Checkpoint[] flags = FindObjectsByType<Checkpoint>(FindObjectsSortMode.None);
+            System.Array.Sort(flags, (a, b) => a.transform.position.x.CompareTo(b.transform.position.x));
+            string flagList = "";
+            foreach (Checkpoint f in flags) flagList += " (" + f.transform.position.x.ToString("F0") + "," + f.transform.position.y.ToString("F1") + ")";
+            Debug.Log("AUTOPLAY checkpoints: " + flags.Length + flagList);
+            if (flags.Length == 0) Debug.Log("AUTOPLAY WARN: level " + level + " has no checkpoints");
+            Vector3 startSpawn = Checkpoint.SpawnPoint;
             yield return PlayLevel(output, level);
+            Debug.Log("AUTOPLAY checkpoint spawn: start x=" + startSpawn.x.ToString("F1")
+                + " last x=" + Checkpoint.SpawnPoint.x.ToString("F1"));
             Debug.Log("AUTOPLAY PASS: level " + level + " finished");
         }
 
@@ -192,6 +208,57 @@ public class AutoPlay : MonoBehaviour
         throw new System.Exception("Level " + level + " did not load.");
     }
 
+    // Kẹt tường: đặt người chơi sát mặt bên trái mỗi tháp pháo (khối cao trong màn),
+    // giữ phím đi vào tường rồi thả. Phải trượt xuống đất hoặc đứng lên nóc, không được lơ lửng.
+    IEnumerator CheckWallSlide(string output, int level)
+    {
+        Player p = FindAnyObjectByType<Player>();
+        if (p == null) yield break;
+        Collider2D body = null;
+        foreach (Collider2D c in p.GetComponents<Collider2D>()) if (!c.isTrigger) { body = c; break; }
+        if (body == null) yield break;
+        Vector3 back = p.transform.position;
+        int index = 0;
+        foreach (TurretAI turret in FindObjectsByType<TurretAI>(FindObjectsSortMode.None))
+        {
+            Collider2D wall = null;
+            foreach (Collider2D c in turret.GetComponentsInChildren<Collider2D>()) if (!c.isTrigger) { wall = c; break; }
+            if (wall == null) continue;
+            index++;
+            Bounds wb = wall.bounds;
+            Vector3 offset = body.bounds.center - p.transform.position;
+            Vector3 at = new Vector3(wb.min.x - body.bounds.extents.x - 0.02f, wb.max.y - 0.15f, 0) - offset;
+            TeleportPlayer(at);
+            yield return new WaitForSecondsRealtime(0.1f);
+            float startY = p.transform.position.y;
+            p.Move(1f);
+            yield return new WaitForSecondsRealtime(1.0f);
+            if (index == 1) yield return Shot(output, "aL" + level + "-wall.png");
+            float midY = p.transform.position.y;
+            p.Move(0f);
+            float drop = startY - midY;
+            bool onTop = body.bounds.min.y >= wb.max.y - 0.1f;
+            // đứng trên vật đỡ khác (vd. lưng gián đi bộ cạnh tháp) là hợp lệ, không phải dính tường
+            bool supported = p.grounded && Mathf.Abs(p.r2.linearVelocity.y) < 0.05f;
+            Debug.Log($"AUTOPLAY wall turret#{index} x={wb.center.x:F1} top={wb.max.y:F2} startY={startY:F2} afterHold={midY:F2} drop={drop:F2} onTop={onTop} supported={supported}");
+            if (drop < 0.5f && !onTop && !supported)
+            {
+                yield return Shot(output, "aL" + level + "-stuck" + index + ".png");
+                ContactPoint2D[] contacts = new ContactPoint2D[8];
+                int n = body.GetContacts(contacts);
+                for (int i = 0; i < n; i++)
+                    Debug.Log($"AUTOPLAY stuck contact: {contacts[i].collider.name} ({contacts[i].collider.GetType().Name}) " +
+                        $"normal={contacts[i].normal} point={contacts[i].point} bounds={contacts[i].collider.bounds.min}->{contacts[i].collider.bounds.max} " +
+                        $"mat={(contacts[i].collider.sharedMaterial != null ? contacts[i].collider.sharedMaterial.name : "none")}");
+                Debug.Log($"AUTOPLAY stuck state: grounded={p.grounded} vel={p.r2.linearVelocity} bodyMat={(body.sharedMaterial != null ? body.sharedMaterial.name : "none")} body={body.bounds.min}->{body.bounds.max}");
+                throw new System.Exception($"Player stuck on the side of turret #{index} at x={wb.center.x:F1} (level {level}).");
+            }
+        }
+        if (index > 0) Debug.Log("AUTOPLAY PASS: no wall stick on " + index + " turret(s) in level " + level);
+        TeleportPlayer(back);
+        yield return new WaitForSecondsRealtime(0.3f);
+    }
+
     IEnumerator PlayLevel(string output, int level)
     {
         // vị thần hộ mệnh: bot không chết vì bẫy/spike (cái chết và respawn đã có
@@ -199,6 +266,7 @@ public class AutoPlay : MonoBehaviour
         Player guarded = FindAnyObjectByType<Player>();
         if (guarded != null) guarded.GodMode = true;
         yield return CheckWeapon(output, level);
+        yield return CheckWallSlide(output, level);
         yield return CheckBlockedExit("missing keys");
 
         // 1) orb dash (màn 1, chỉ khi chưa mở khóa vĩnh viễn)
@@ -275,6 +343,28 @@ public class AutoPlay : MonoBehaviour
             if (float.IsNaN(stageY) || Mathf.Abs(dancer.transform.position.y - stageY) > 1.7f)
                 throw new System.Exception("Dancer drifted away from the stage before the fight.");
             Debug.Log("AUTOPLAY PASS: dancer stays within reach of the stage");
+            // đi bộ qua cờ checkpoint gần sân khấu nhất (DanceWith dịch chuyển nên sẽ bỏ qua nó)
+            Checkpoint stageFlag = null;
+            foreach (Checkpoint f in FindObjectsByType<Checkpoint>(FindObjectsSortMode.None))
+                if (f.transform.position.x < dancer.transform.position.x
+                    && (stageFlag == null || f.transform.position.x > stageFlag.transform.position.x)) stageFlag = f;
+            if (stageFlag != null)
+            {
+                float flagX = stageFlag.transform.position.x;
+                yield return WalkTo(flagX + 0.5f, 0.6f, 20f);
+                if (Mathf.Abs(Checkpoint.SpawnPoint.x - flagX) >= 0.1f)
+                {
+                    // kẹt dọc đường (vd. tháp pháo): đặt lại trước cờ 3m rồi vẫn đi bộ chạm cờ
+                    float y = AdventureProps.GroundYNear(flagX - 3f);
+                    TeleportPlayer(new Vector3(flagX - 3f, float.IsNaN(y) ? 2f : y + 1.2f, 0));
+                    yield return new WaitForSecondsRealtime(0.4f);
+                    yield return WalkTo(flagX + 0.5f, 0.6f, 10f);
+                }
+                yield return WaitUntil(() => Mathf.Abs(Checkpoint.SpawnPoint.x - flagX) < 0.1f, 2f);
+                if (Mathf.Abs(Checkpoint.SpawnPoint.x - flagX) >= 0.1f)
+                    throw new System.Exception("Checkpoint at x=" + flagX.ToString("F0") + " was not activated.");
+                Debug.Log("AUTOPLAY PASS: checkpoint x=" + flagX.ToString("F0") + " activated on foot");
+            }
             yield return DanceWith(dancer);
             if (!QuestState.MiniBossDefeated) throw new System.Exception("Dancer never took a bow.");
             Debug.Log("AUTOPLAY PASS: Roach Dancer took a bow");

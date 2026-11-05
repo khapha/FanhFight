@@ -25,7 +25,10 @@ public class GameHUD : MonoBehaviour
     float toastTimer;
     static Sprite heartSprite, circleSprite;
     Transform content;
-    RectTransform titleCard;
+    RectTransform titleCard, questCard, toastCard;
+    Image questIcon;
+    CanvasGroup toastGroup;
+    float questPulse;
     int lastHealth = -1, lastPoints = -1, lastLives = -1, lastBest = -1;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -53,6 +56,7 @@ public class GameHUD : MonoBehaviour
         if (instance == null) return;
         instance.toastText.text = text;
         instance.toastTimer = 1.5f;
+        instance.toastCard.sizeDelta = new Vector2(Mathf.Max(200f, instance.toastText.preferredWidth + 64f), 68f);
     }
 
     void Build(Player p, int level)
@@ -97,23 +101,33 @@ public class GameHUD : MonoBehaviour
         titleText.rectTransform.anchoredPosition = Vector2.zero;
         // phải trên: điểm cao nhất
         bestText = MakeText("", 26, new Vector2(1, 1), new Vector2(-30, -30), TextAlignmentOptions.Right);
-        CuteTheme.Card(content, new Vector2(1, 1), new Vector2(-138, -150), new Vector2(252, 88));
-        MakeText(WeaponLoadout.Name, 20, new Vector2(1, 1), new Vector2(-30, -126), TextAlignmentOptions.Right);
-        Image heatTrack = MakeImage(circleSprite, new Vector2(1, 1), new Vector2(-246, -150), new Vector2(216, 9));
+        // dưới best: thẻ nhiệm vụ (chìa khóa / boss / cửa) có nền như các thẻ khác,
+        // tự giãn theo độ dài chữ, nảy nhẹ khi tiến độ thay đổi
+        questCard = CuteTheme.Card(content, new Vector2(1, 1), new Vector2(-138, -101), new Vector2(252, 52)).rectTransform;
+        questIcon = MakeImage(KeyPickup.KeySprite, new Vector2(1, 1), Vector2.zero, new Vector2(30, 30));
+        questIcon.transform.SetParent(questCard, false);
+        questIcon.rectTransform.anchorMin = questIcon.rectTransform.anchorMax = new Vector2(0, 0.5f);
+        questIcon.rectTransform.anchoredPosition = new Vector2(16, 0);
+        questText = MakeText("", 22, new Vector2(1, 0.5f), Vector2.zero, TextAlignmentOptions.Right);
+        questText.transform.SetParent(questCard, false);
+        questText.rectTransform.anchoredPosition = new Vector2(-18, 0);
+
+        CuteTheme.Card(content, new Vector2(1, 1), new Vector2(-138, -185), new Vector2(252, 88));
+        MakeText(WeaponLoadout.Name, 20, new Vector2(1, 1), new Vector2(-30, -161), TextAlignmentOptions.Right);
+        Image heatTrack = MakeImage(circleSprite, new Vector2(1, 1), new Vector2(-246, -185), new Vector2(216, 9));
         heatTrack.color = new Color(0.25f, 0.3f, 0.25f, 0.2f);
         heatTrack.gameObject.SetActive(WeaponLoadout.IsSpray);
-        heatFill = MakeImage(circleSprite, new Vector2(1, 1), new Vector2(-246, -150), new Vector2(0, 9));
+        heatFill = MakeImage(circleSprite, new Vector2(1, 1), new Vector2(-246, -185), new Vector2(0, 9));
         heatFill.gameObject.SetActive(WeaponLoadout.IsSpray);
         toolHint = MakeText(WeaponLoadout.IsSpray ? "Slow mist | Heat 0%" : "Interrupt a charge to stun", 16,
-            new Vector2(1, 1), new Vector2(-30, -175), TextAlignmentOptions.Right);
-        // dưới best: dòng nhiệm vụ
-        questText = MakeText("", 22, new Vector2(1, 1), new Vector2(-30, -84), TextAlignmentOptions.Right);
-        questText.color = new Color(0.4f, 0.34f, 0.16f);
-        // giữ viền trắng đậm để nổi trên mọi nền (CuteTheme.Text mặc định xóa outline)
-        questText.outlineWidth = 0.55f;
-        questText.outlineColor = Color.white;
-        // giữa màn: thông báo ngắn (checkpoint...)
-        toastText = MakeText("", 40, new Vector2(0.5f, 0.5f), new Vector2(0, 140), TextAlignmentOptions.Center);
+            new Vector2(1, 1), new Vector2(-30, -210), TextAlignmentOptions.Right);
+        // giữa màn: thông báo ngắn (checkpoint, chìa khóa...) trên thẻ nền, mờ dần cùng chữ
+        toastCard = CuteTheme.Card(content, new Vector2(0.5f, 0.5f), new Vector2(0, 140), new Vector2(200, 68)).rectTransform;
+        toastGroup = toastCard.gameObject.AddComponent<CanvasGroup>();
+        toastGroup.alpha = 0;
+        toastText = MakeText("", 36, new Vector2(0.5f, 0.5f), Vector2.zero, TextAlignmentOptions.Center);
+        toastText.transform.SetParent(toastCard, false);
+        toastText.rectTransform.anchoredPosition = Vector2.zero;
         // dưới toast: thanh máu Vua Gián (chỉ hiện khi đang đánh boss)
         bossCard = CuteTheme.Card(content, new Vector2(0.5f, 0.5f), new Vector2(0, 60), new Vector2(380, 46)).rectTransform;
         bossCard.gameObject.SetActive(false);
@@ -214,7 +228,8 @@ public class GameHUD : MonoBehaviour
 
     void Update()
     {
-        titleCard.anchoredPosition = new Vector2(0, ((RectTransform)content).rect.width < 1000 ? -185 : -39);
+        // màn hẹp: tên màn xuống dưới cột phải (best + nhiệm vụ + vũ khí) để không chồng lên
+        titleCard.anchoredPosition = new Vector2(0, ((RectTransform)content).rect.width < 1000 ? -265 : -39);
         if (WeaponLoadout.IsSpray && attack != null)
         {
             int percent = Mathf.RoundToInt(attack.Heat * 100);
@@ -244,7 +259,25 @@ public class GameHUD : MonoBehaviour
 
         // dòng nhiệm vụ hiện tại
         string quest = QuestState.ObjectiveText;
-        if (questText.text != quest) questText.text = quest;
+        if (questText.text != quest)
+        {
+            bool first = questText.text.Length == 0;
+            questText.text = quest;
+            questCard.gameObject.SetActive(quest.Length > 0);
+            bool keyPhase = !QuestState.HasAllKeys;
+            questIcon.gameObject.SetActive(keyPhase);
+            float pad = keyPhase ? 64f : 36f;
+            questCard.sizeDelta = new Vector2(Mathf.Max(252f, questText.preferredWidth + pad), 52f);
+            // giữ mép phải thẳng hàng với các thẻ khác (cách lề 12px)
+            questCard.anchoredPosition = new Vector2(-12f - questCard.sizeDelta.x * 0.5f, -101f);
+            if (!first) questPulse = 0.35f;
+        }
+        if (questPulse > 0)
+        {
+            questPulse = Mathf.Max(0, questPulse - Time.unscaledDeltaTime);
+            float s = 1f + Mathf.Sin(questPulse / 0.35f * Mathf.PI) * 0.12f;
+            questCard.localScale = new Vector3(s, s, 1);
+        }
 
         // thanh máu Vua Gián: chỉ hiện khi có ít nhất một cú đánh trúng boss
         bool bossFight = QuestState.BossHp >= 0 && QuestState.BossHp > 0 && !QuestState.BossDefeated;
@@ -260,7 +293,7 @@ public class GameHUD : MonoBehaviour
         if (toastTimer > 0)
         {
             toastTimer -= Time.unscaledDeltaTime;
-            toastText.alpha = Mathf.Clamp01(toastTimer);
+            toastGroup.alpha = Mathf.Clamp01(toastTimer);
         }
     }
 }

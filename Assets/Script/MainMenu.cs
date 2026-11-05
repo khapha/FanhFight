@@ -34,6 +34,7 @@ public class MainMenu : MonoBehaviour
         Button quit = MiniUI.MakeButton(card, "Quit", Vector2.one * 0.5f, new Vector2(160, -283), new Vector2(150, 42), Quit);
         menuButtons = new[] { playButton, smash, garden, diary, helpButton, quit };
         MiniUI.Select(playButton);
+        StudioIntro.ShowOnce();
     }
 
     void Update()

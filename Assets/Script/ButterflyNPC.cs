@@ -11,7 +11,7 @@ public class ButterflyNPC : MonoBehaviour
     {
         new[] {
             "Hi! The roaches here are silly and harmless.",
-            "Bop them with your slipper - they turn into flowers!",
+            "Spray or bop them - they turn into flowers!",
             "Find 3 golden keys to open the gate. You got this!"
         },
         new[] {
@@ -20,9 +20,14 @@ public class ButterflyNPC : MonoBehaviour
             "Grab the keys and meet me at the gate!"
         },
         new[] {
-            "Last level - I believe in you!",
+            "Boss time - I believe in you!",
             "The Roach King is big, but he's a big scaredy-cat.",
             "Bop him 6 times and he'll give up for good!"
+        },
+        new[] {
+            "Last level - the sunset is so pretty!",
+            "The Roach Dancer thinks he owns this stage.",
+            "Tag him 4 times and he'll take a bow!"
         },
     };
 

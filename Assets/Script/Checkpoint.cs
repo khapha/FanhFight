@@ -15,6 +15,9 @@ public class Checkpoint : MonoBehaviour
         { "Scene 1", new[] { 72f, 128f } },
         { "Scene 2", new[] { 88f, 160f } },
         { "Scene 4", new[] { 90f, 150f } },
+        // Sunset Meadow is a copy of Scene 1: clear of spikes 46-49/84-95/150-165,
+        // turret 142 and the Roach Dancer stage (170-182).
+        { "Sunset Meadow", new[] { 76f, 168f } },
     };
 
     static Sprite poleSprite, flagSprite;
