@@ -16,6 +16,9 @@ public class PlayerAttack : MonoBehaviour
     float sprayTimer;
     bool impactSound;
     bool pendingSpray;
+    readonly WeaponHeat heat = new WeaponHeat();
+    public float Heat => heat.Value;
+    public bool Overheated => WeaponLoadout.IsSpray && heat.Overheated;
     [System.NonSerialized] public Transform Muzzle;
     public bool InputHeld => battack || GameInput.Attack.IsPressed();
     public float Progress => attacking ? 1f - acttackdelay / attackTime : 0;
@@ -28,6 +31,11 @@ public class PlayerAttack : MonoBehaviour
         anim = gameObject.GetComponent<Animator>();
         player = GetComponent<Player>();
         attackTime = WeaponLoadout.Duration;
+        if (trigger != null)
+        {
+            AttackTrigger hits = trigger.GetComponent<AttackTrigger>();
+            if (hits != null) hits.Source = transform;
+        }
         if (trigger is BoxCollider2D box)
         {
             float sx = Mathf.Max(Mathf.Abs(transform.lossyScale.x), 0.001f);
@@ -53,9 +61,24 @@ public class PlayerAttack : MonoBehaviour
         if (!GameSession.IsPlaying || (player != null && !player.CanAct))
         {
             CancelAttack();
+            if (GameSession.State == GameSession.Phase.Respawning || (player != null && player.ourHealth <= 0))
+                heat.Reset();
             return;
         }
-        if((GameInput.Attack.IsPressed() || battack) && !attacking)
+        if (WeaponLoadout.IsSpray)
+        {
+            bool wasHot = heat.Overheated;
+            heat.Tick(Time.deltaTime, attacking);
+            if (heat.Overheated)
+            {
+                // Preserve held touch input while cooling so it can resume automatically.
+                attacking = pendingSpray = false;
+                acttackdelay = 0;
+                if (trigger != null) trigger.enabled = false;
+                if (!wasHot) GameHUD.Toast("Bottle too warm! Let it cool.");
+            }
+        }
+        if(InputHeld && !attacking && !Overheated)
         {
             attacking = true;
             trigger.enabled = true;

@@ -9,6 +9,7 @@ public static class TestBuild
     public static void VerifyAndBuild()
     {
         Quest();
+        CombatChecks.Run();
         All();
     }
     // Full local playtest build: includes the menu and all level transitions.

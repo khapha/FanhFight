@@ -6,73 +6,101 @@ public static class MiniArt
     static Sprite[] roach;
     static Sprite circle, flower, slipper, floor;
 
-    // gián nhìn từ trên xuống, đầu hướng lên, mắt to cho đỡ sợ
-    static readonly string[] Body = {
-        "..A..........A..",
-        "...A........A...",
-        "....A......A....",
-        ".....OOOOOO.....",
-        "....OWWBBWWO....",
-        "....OWKBBKWO....",
-        ".....OBBBBO.....",
-        "....OOOOOOOO....",
-        "...OLLBBBBBBO...",
-        "...OLBBBBBBBO...",
-        "...OLBBBBBBBO...",
-        "...OLBBBBBBBO...",
-        "...OLBBBBBBBO...",
-        "...OLBBBBBBBO...",
-        "...OLBBBBBBBO...",
-        "...OBBBBBBBBO...",
-        "....OBBBBBBO....",
-        ".....OBBBBO.....",
-        "......OOOO......",
-        "................",
-    };
-
+    // Top-down cockroaches keep the original 1 x 1.25 world footprint, head upward.
     public static Sprite[] Roach
     {
         get
         {
-            if (roach == null)
-                // hai khung hình: chân trước-sau so le nhau
-                roach = new[] { MakeRoach(new[] { 8, 11, 14 }, new[] { 9, 12, 15 }),
-                                MakeRoach(new[] { 9, 12, 15 }, new[] { 8, 11, 14 }) };
+            if (roach == null) roach = new[] { MakeRoach(0), MakeRoach(1) };
             return roach;
         }
     }
 
-    static Sprite MakeRoach(int[] outRows, int[] inRows)
+    static Sprite MakeRoach(int frame)
     {
-        int w = 16, h = Body.Length;
-        Texture2D t = NewTex(w, h);
-        for (int y = 0; y < h; y++)
-            for (int x = 0; x < w; x++)
-                t.SetPixel(x, h - 1 - y, Col(Body[y][x]));
-        Color leg = Col('A');
-        // chân duỗi ra ngoài ở các hàng outRows, thu sát thân ở inRows
-        foreach (int r in outRows) { Px(t, h, 0, r, leg); Px(t, h, 1, r, leg); Px(t, h, 14, r, leg); Px(t, h, 15, r, leg); Px(t, h, 2, r + 1, leg); Px(t, h, 13, r + 1, leg); }
-        foreach (int r in inRows) { Px(t, h, 2, r, leg); Px(t, h, 13, r, leg); }
-        t.Apply();
-        return Sprite.Create(t, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f), 16);
-    }
-
-    static void Px(Texture2D t, int h, int x, int y, Color c) { t.SetPixel(x, h - 1 - y, c); }
-
-    static Color Col(char c)
-    {
-        switch (c)
+        const int w = 32, h = 40;
+        Color32[] pixels = new Color32[w * h];
+        Color32 ink = new Color32(40, 25, 21, 255);
+        Color32 dark = new Color32(81, 38, 27, 255);
+        Color32 shell = new Color32(137, 66, 38, 255);
+        Color32 light = new Color32(188, 113, 64, 255);
+        Color32 leg = new Color32(106, 65, 41, 255);
+        System.Action<int, int, Color32> set = (x, y, c) =>
         {
-            case 'O': return new Color(0.2f, 0.12f, 0.08f);
-            case 'B': return new Color(0.58f, 0.35f, 0.2f);
-            case 'L': return new Color(0.78f, 0.53f, 0.32f);
-            case 'A': return new Color(0.32f, 0.2f, 0.12f);
-            case 'W': return Color.white;
-            case 'K': return Color.black;
-            default: return Color.clear;
-        }
-    }
+            if (x >= 0 && x < w && y >= 0 && y < h) pixels[y * w + x] = c;
+        };
+        System.Action<float, float, float, float, Color32> line = (x0, y0, x1, y1, c) =>
+        {
+            int n = Mathf.CeilToInt(Mathf.Max(Mathf.Abs(x1 - x0), Mathf.Abs(y1 - y0))) + 1;
+            for (int i = 0; i <= n; i++)
+            {
+                float t = i / (float)n;
+                set(Mathf.RoundToInt(x0 + (x1 - x0) * t), Mathf.RoundToInt(y0 + (y1 - y0) * t), c);
+            }
+        };
+        System.Action<float, float, float, float, Color32> ellipse = (cx, cy, rx, ry, c) =>
+        {
+            for (int y = 0; y < h; y++) for (int x = 0; x < w; x++)
+                if ((x - cx) * (x - cx) / (rx * rx) + (y - cy) * (y - cy) / (ry * ry) <= 1f) set(x, y, c);
+        };
 
+        // Three splayed pairs with jointed tibiae; alternate tripods scuttle together.
+        for (int side = -1; side <= 1; side += 2)
+        {
+            for (int pair = 0; pair < 3; pair++)
+            {
+                int stride = ((pair + frame + (side > 0 ? 1 : 0)) & 1) == 0 ? 2 : -2;
+                float hipX = 15.5f + side * 5f;
+                int hipY = 24 - pair * 5;
+                float kneeX = 15.5f + side * 10f;
+                int kneeY = hipY + (pair == 0 ? 2 : -2) + stride;
+                float toeX = 15.5f + side * 14f;
+                int toeY = hipY + (pair == 0 ? 5 : pair == 1 ? -2 : -7) + stride;
+                line(hipX, hipY, kneeX, kneeY, ink);
+                line(kneeX, kneeY, toeX, toeY, leg);
+                line(toeX, toeY, toeX - side, toeY - 2, ink);
+                set(Mathf.RoundToInt(kneeX + side), kneeY - 1, leg);
+            }
+        }
+        ellipse(15.5f, 16, 8f, 11.5f, ink);
+        ellipse(15.5f, 16.5f, 7f, 10f, dark);
+        ellipse(15.5f, 18, 6f, 9f, shell);
+        ellipse(15.5f, 29, 3.5f, 3.5f, ink);
+        ellipse(15.5f, 29, 2.5f, 2.5f, dark);
+        ellipse(15.5f, 25, 6f, 5f, ink);
+        ellipse(15.5f, 25.5f, 5f, 4f, shell);
+        line(12, 28, 16, 29, light);
+        line(16, 29, 19, 27, light);
+
+        // Folded forewing seam and slender veins, with exposed abdominal segments.
+        line(15, 24, 15, 6, dark);
+        line(16, 23, 16, 7, ink);
+        line(11, 24, 10, 17, light);
+        line(10, 17, 12, 10, light);
+        line(20, 23, 21, 17, light);
+        line(21, 17, 19, 11, dark);
+        for (int y = 7; y <= 13; y += 3)
+        {
+            line(10, y + 1, 13, y, dark);
+            line(18, y, 21, y + 1, dark);
+        }
+        set(11, 22, new Color32(226, 164, 99, 255));
+        set(11, 21, new Color32(226, 164, 99, 255));
+        int wiggle = frame == 0 ? 0 : 1;
+        line(14, 31, 10, 35, ink);
+        line(10, 35, 5, 38 - wiggle, leg);
+        line(5, 38 - wiggle, 0, 39 - wiggle, ink);
+        line(17, 31, 22, 35, ink);
+        line(22, 35, 26, 38 + wiggle, leg);
+        line(26, 38 + wiggle, 31, 38, ink);
+        line(13, 6, 11, 2, ink);
+        line(18, 6, 20, 2, ink);
+
+        Texture2D texture = NewTex(w, h);
+        texture.SetPixels32(pixels);
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0, 0, w, h), Vector2.one * 0.5f, 32);
+    }
     public static Sprite Circle
     {
         get

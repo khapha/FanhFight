@@ -18,6 +18,13 @@ PlayerPrefs disk persistence or a full Unity compilation.
 
 ## Unity 6000.6.7f1 playtest
 
+Weapon-role checks also run in the .NET suite: sustained spray overheats and
+stops its collider, held input cannot bypass the cooldown, a cooled bottle can
+fire again, pause freezes heat, death/respawn resets it, and the slipper has no
+heat limit. Multi-collider targets receive one weapon reaction per swing, with
+the player's position retained as the knockback source. These use API doubles;
+actual enemy slow/stun/armor and collision movement require the Unity checks.
+
 1. Open `Assets/Scenes/Scene 3.unity` and enter Play mode. Choose **Adventure**.
    On a fresh save, only **Woodland** is available. Choose a level, then choose
    **Spray Bottle** or **Slipper**. Back returns to level selection.
@@ -39,6 +46,16 @@ PlayerPrefs disk persistence or a full Unity compilation.
 8. In **Flower Garden**, create a flower and return to the menu while it is still
    growing. Reopen the garden and restart the app: the flower should retain its
    full size and appearance. **Reset Garden** should persist after restarting.
+9. Hold the spray until its heat meter locks, including with a held touch button.
+   Damage and mist should stop; holding must resume only after cooling. Pause
+   during cooling and verify the meter stays still. Die/retry and verify the
+   new life starts with a ready bottle. The slipper must swing indefinitely.
+10. Compare runner, armored and flying roaches. Spray should slow all three;
+    armor should resist spray more than slipper hits. Hit a telegraphing roach
+    with the slipper: the warning should disappear, its attack should be
+    interrupted, and it should be stunned and pushed away from the player.
+    Verify recovery and stun cannot deal contact damage, and flying enemies
+    stop moving while paused. Check both player-facing directions.
 
 Existing zero-size flowers are recovered when loading. Malformed save entries
 are skipped; the existing `garden` save format and unrelated player data remain.

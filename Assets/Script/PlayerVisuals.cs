@@ -104,7 +104,7 @@ public class PlayerVisuals : MonoBehaviour
         if (WeaponLoadout.IsSpray)
         {
             if (active && progress >= 0.12f) sprayLatched = true;
-            if (!active && !(attack != null && attack.InputHeld && player.CanAct)) sprayLatched = false;
+            if (!active && (!(attack != null && attack.InputHeld && player.CanAct) || attack.Overheated)) sprayLatched = false;
             if (sprayLatched) frame = poses.spray;
         }
         // Let the original Animator draw the full run/jump sprite between attacks.

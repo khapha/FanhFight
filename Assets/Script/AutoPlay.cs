@@ -105,6 +105,17 @@ public class AutoPlay : MonoBehaviour
         if (WeaponLoadout.IsSpray == slipper) throw new System.Exception("Tool selection was not applied.");
         Debug.Log("AUTOPLAY PASS: selected " + WeaponLoadout.Name + " through menu");
 
+        if (System.Environment.CommandLine.Contains("-cute-combat-only"))
+        {
+            yield return WaitForLevel(first);
+            yield return new WaitForSecondsRealtime(3.5f);
+            FindAnyObjectByType<Player>().GodMode = true;
+            yield return CheckWeapon(output, first);
+            yield return CheckCombat(output);
+            Debug.Log("AUTOPLAY COMPLETE: weapon roles, real hits, reactions and telegraphed rush.");
+            yield break;
+        }
+
         if (System.Environment.CommandLine.Contains("-cute-tools-only"))
         {
             yield return WaitForLevel(first);
@@ -401,6 +412,113 @@ public class AutoPlay : MonoBehaviour
         }
         if (player.transform.lossyScale.x < 0) player.Flip();
         TeleportPlayer(origin);
+    }
+
+    IEnumerator CheckCombat(string output)
+    {
+        Player p = FindAnyObjectByType<Player>();
+        PlayerAttack attack = p.GetComponent<PlayerAttack>();
+        if (p.transform.lossyScale.x < 0) p.Flip();
+        RoachWalker target = RoachWalker.Create(new Vector2(10, 20));
+        target.enabled = false;
+        Rigidbody2D targetBody = target.GetComponent<Rigidbody2D>();
+        targetBody.bodyType = RigidbodyType2D.Kinematic;
+        targetBody.position = (Vector2)p.transform.position + new Vector2(1.45f, -0.15f);
+        target.transform.position = targetBody.position;
+        RoachStatus reaction = target.GetComponent<RoachStatus>();
+        reaction.Telegraphing = true;
+        try
+        {
+            yield return new WaitForSecondsRealtime(0.8f);
+            attack.PlayerActtack(true);
+            yield return new WaitForSecondsRealtime(0.28f);
+            attack.PlayerActtack(false);
+            int expected = 60 - RoachStatus.ResolveDamage(WeaponLoadout.Damage, WeaponLoadout.IsSpray, RoachStatus.Species.Armored);
+            if (target.Health != expected)
+                throw new System.Exception("Armored real hit failed: hp=" + target.Health + " expected=" + expected);
+            if (WeaponLoadout.IsSpray ? !reaction.Slowed : !reaction.Stunned || reaction.Telegraphing)
+                throw new System.Exception("Weapon reaction was not applied through actual overlap.");
+            yield return Shot(output, WeaponLoadout.IsSpray ? "combat-slow.png" : "combat-perfect-slap.png");
+            Debug.Log("AUTOPLAY PASS: actual " + WeaponLoadout.Name + " hit, armor and reaction.");
+            attack.CancelAttack();
+            if (WeaponLoadout.IsSpray)
+            {
+                attack.PlayerActtack(true);
+                float deadline = Time.realtimeSinceStartup + 6;
+                while (!attack.Overheated && Time.realtimeSinceStartup < deadline) yield return null;
+                if (!attack.Overheated || attack.trigger.enabled)
+                    throw new System.Exception("Continuous spray did not stop at overheat.");
+                attack.PlayerActtack(false);
+                yield return Shot(output, "combat-overheated.png");
+                yield return new WaitForSeconds(2.3f);
+                if (attack.Overheated) throw new System.Exception("Bottle failed to cool down.");
+                Debug.Log("AUTOPLAY PASS: actual held spray overheats, disables damage and recovers.");
+            }
+        }
+        finally { attack.CancelAttack(); if (target != null) Destroy(target.gameObject); }
+
+        float x = p.transform.position.x + 3.5f;
+        if (!AdventureProps.TryGround(x, out float ground)) throw new System.Exception("No safe ground for rush check.");
+        RoachWalker runner = RoachWalker.Create(new Vector2(0, 20));
+        runner.GetComponent<Rigidbody2D>().position = new Vector2(x, ground + 0.55f);
+        runner.transform.position = new Vector3(x, ground + 0.55f, 0);
+        RoachStatus runnerStatus = runner.GetComponent<RoachStatus>();
+        bool warned = false, rushed = false;
+        float end = Time.realtimeSinceStartup + 4;
+        try
+        {
+            while (Time.realtimeSinceStartup < end)
+            {
+                warned |= runnerStatus.Telegraphing;
+                if (Mathf.Abs(runner.GetComponent<Rigidbody2D>().linearVelocity.x) > 4)
+                {
+                    if (!warned) throw new System.Exception("Runner rushed without a warning.");
+                    rushed = true;
+                }
+                yield return null;
+            }
+            if (!warned || !rushed) throw new System.Exception("Runner did not complete warning/rush cycle.");
+            yield return Shot(output, "combat-roach-runner.png");
+            Debug.Log("AUTOPLAY PASS: runner warns before a committed rush.");
+        }
+        finally { if (runner != null) Destroy(runner.gameObject); }
+
+        GameObject flyerGo = new GameObject("CombatFlyer");
+        flyerGo.tag = "Enemy";
+        flyerGo.transform.position = p.transform.position + new Vector3(2.8f, 0.8f, 0);
+        Rigidbody2D flyerBody = flyerGo.AddComponent<Rigidbody2D>();
+        flyerBody.gravityScale = 0;
+        flyerBody.bodyType = RigidbodyType2D.Kinematic;
+        flyerGo.AddComponent<BoxCollider2D>().isTrigger = true;
+        flyerGo.AddComponent<SpriteRenderer>();
+        flyerGo.AddComponent<Enemy>();
+        flyerGo.AddComponent<EnemyVisuals>();
+        RoachStatus flyerStatus = flyerGo.GetComponent<RoachStatus>();
+        warned = rushed = false;
+        end = Time.realtimeSinceStartup + 3.5f;
+        try
+        {
+            while (Time.realtimeSinceStartup < end)
+            {
+                warned |= flyerStatus.Telegraphing;
+                if (flyerBody.linearVelocity.magnitude > 4)
+                {
+                    if (!warned) throw new System.Exception("Flyer swooped without a warning.");
+                    rushed = true;
+                }
+                yield return null;
+            }
+            if (!warned || !rushed) throw new System.Exception("Flyer did not complete warning/swoop cycle.");
+            GameSession.Pause();
+            Vector2 frozen = flyerBody.position;
+            yield return new WaitForSecondsRealtime(0.3f);
+            if (Vector2.Distance(frozen, flyerBody.position) > 0.005f)
+                throw new System.Exception("Paused flyer kept moving.");
+            GameSession.Resume();
+            yield return Shot(output, "combat-roach-flyer.png");
+            Debug.Log("AUTOPLAY PASS: flyer warns before swoop and remains still during pause.");
+        }
+        finally { GameSession.Resume(); Destroy(flyerGo); }
     }
 
     class WeaponProbe : MonoBehaviour

@@ -16,6 +16,7 @@
     <Compile Include="../../Assets/Script/PlayerAttack.cs" Link="PlayerAttack.cs" />
     <Compile Include="../../Assets/Script/AttackTrigger.cs" Link="AttackTrigger.cs" />
     <Compile Include="../../Assets/Script/WeaponLoadout.cs" Link="WeaponLoadout.cs" />
+    <Compile Include="../../Assets/Script/WeaponHeat.cs" Link="WeaponHeat.cs" />
     <Reference Include="Microsoft.CodeAnalysis">
       <HintPath>$(MSBuildSDKsPath)/../Roslyn/bincore/Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>

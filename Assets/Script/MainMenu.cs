@@ -110,9 +110,9 @@ public class MainMenu : MonoBehaviour
         Label(card, "Choose your tool", 36, new Vector2(0, 240));
         Label(card, AdventureProgress.Titles[level - 1], 22, new Vector2(0, 192));
         ToolChoice(card, level, WeaponLoadout.Kind.SprayBottle, -136, WeaponArt.Bottle,
-            "Spray Bottle", "Long mint mist\nHold to spray");
+            "Spray Bottle", "Long mist slows groups\nWatch the heat meter");
         ToolChoice(card, level, WeaponLoadout.Kind.Slipper, 136, MiniArt.Slipper,
-            "Slipper", "Close-up slap\nHold to swing");
+            "Slipper", "Strong close-up slap\nTime a slap to stun");
         Button back = ActionButton(card, "Back", -230, () => { CloseModal(); PlayGame(); });
         Button[] choices = card.GetComponentsInChildren<Button>();
         MiniUI.Select(choices[WeaponLoadout.IsSpray ? 0 : 1]);

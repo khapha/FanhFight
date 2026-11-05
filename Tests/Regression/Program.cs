@@ -286,9 +286,11 @@ Check("loadout persists and slipper has distinct reach, duration and sound", () 
     PlayerPrefs.SetInt("adventureWeapon", 77);
     Assert(WeaponLoadout.IsSpray, "Invalid saved loadout should fall back to spray");
     float sprayReach = WeaponLoadout.Reach;
+    int sprayDamage = WeaponLoadout.Damage;
     WeaponLoadout.Select(WeaponLoadout.Kind.Slipper);
     GameSession.LoadScene(1);
     Assert(!WeaponLoadout.IsSpray && WeaponLoadout.Reach < sprayReach, "Slipper selection or range lost");
+    Assert(WeaponLoadout.Damage > sprayDamage && sprayDamage > 0, "Close-range slipper should hit harder than spray");
     var attack = new PlayerAttack { trigger = new BoxCollider2D() };
     attack.gameObject.Components[typeof(Animator)] = new Animator();
     Invoke(typeof(PlayerAttack), "Awake", attack);
@@ -303,6 +305,100 @@ Check("loadout persists and slipper has distinct reach, duration and sound", () 
     Assert(!attack.trigger.enabled, "Slipper stayed active after disabling");
     WeaponLoadout.Select(WeaponLoadout.Kind.SprayBottle);
     GameInput.Attack.Pressed = false;
+});
+
+Check("spray heat locks sustained fire until it cools and then allows another burst", () =>
+{
+    GameSession.LoadScene(1);
+    WeaponLoadout.Select(WeaponLoadout.Kind.SprayBottle);
+    var attack = new PlayerAttack { trigger = new Collider2D() };
+    Invoke(typeof(PlayerAttack), "Awake", attack);
+    GameInput.Attack.Pressed = true;
+    Assert(attack.Heat == 0 && !attack.Overheated, "A fresh bottle must be ready");
+    int frames = 0;
+    while (!attack.Overheated && frames++ < 100) Invoke(typeof(PlayerAttack), "Update", attack);
+    Assert(attack.Overheated && attack.Heat <= 1 && !attack.trigger.enabled && !attack.attacking,
+        "Sustained spray must overheat and immediately stop damage");
+    int spraysAtLock = Fx.Sprays;
+    bool checkedLock = false;
+    for (int i = 0; i < 100 && attack.Overheated; i++)
+    {
+        float before = attack.Heat;
+        Invoke(typeof(PlayerAttack), "Update", attack);
+        if (attack.Overheated)
+        {
+            checkedLock = true;
+            Assert(!attack.trigger.enabled && !attack.attacking && Fx.Sprays == spraysAtLock,
+                "Holding attack bypassed the cooling lock");
+            Assert(attack.Heat < before, "An overheated held bottle did not cool");
+        }
+    }
+    Assert(checkedLock && !attack.Overheated && attack.Heat <= 0.2f,
+        "Bottle recovered before cooling to a safe level");
+    Invoke(typeof(PlayerAttack), "Update", attack);
+    Assert(attack.attacking, "Holding attack did not resume after cooling");
+    GameInput.Attack.Pressed = false;
+    attack.CancelAttack();
+});
+
+Check("death and respawn restore a ready bottle without retaining its damage window", () =>
+{
+    GameSession.LoadScene(1);
+    WeaponLoadout.Select(WeaponLoadout.Kind.SprayBottle);
+    var attack = new PlayerAttack { trigger = new Collider2D() };
+    var player = new Player();
+    attack.gameObject.Components[typeof(Player)] = player;
+    Invoke(typeof(PlayerAttack), "Awake", attack);
+    GameInput.Attack.Pressed = true;
+    for (int i = 0; i < 12; i++) Invoke(typeof(PlayerAttack), "Update", attack);
+    Assert(attack.Heat > 0, "Test must heat the bottle before dying");
+    player.Alive = false;
+    player.ourHealth = 0;
+    Invoke(typeof(PlayerAttack), "Update", attack);
+    Assert(attack.Heat == 0 && !attack.Overheated && !attack.trigger.enabled,
+        "Death carried heat or an active damage window into the next life");
+    player.Alive = true;
+    player.ourHealth = 4;
+    for (int i = 0; i < 12; i++) Invoke(typeof(PlayerAttack), "Update", attack);
+    GameSession.BeginRespawn();
+    Invoke(typeof(PlayerAttack), "Update", attack);
+    Assert(attack.Heat == 0 && !attack.trigger.enabled, "Respawn left the tool hot or active");
+    GameSession.EndRespawn();
+    Invoke(typeof(PlayerAttack), "Update", attack);
+    Assert(attack.attacking, "Fresh life could not use its bottle");
+    GameInput.Attack.Pressed = false;
+    attack.CancelAttack();
+});
+
+Check("pause freezes bottle heat and slipper remains usable through sustained attacks", () =>
+{
+    GameSession.LoadScene(1);
+    WeaponLoadout.Select(WeaponLoadout.Kind.SprayBottle);
+    var attack = new PlayerAttack { trigger = new Collider2D() };
+    Invoke(typeof(PlayerAttack), "Awake", attack);
+    GameInput.Attack.Pressed = true;
+    for (int i = 0; i < 12; i++) Invoke(typeof(PlayerAttack), "Update", attack);
+    float heat = attack.Heat;
+    Assert(heat > 0, "Held spray did not warm the bottle");
+    GameSession.Pause();
+    for (int i = 0; i < 30; i++) Invoke(typeof(PlayerAttack), "Update", attack);
+    Assert(attack.Heat == heat && !attack.trigger.enabled, "Pause changed heat or allowed damage");
+    GameSession.Resume();
+    GameInput.Attack.Pressed = false;
+    for (int i = 0; i < 100; i++) Invoke(typeof(PlayerAttack), "Update", attack);
+    Assert(attack.Heat == 0 && !attack.Overheated, "Resting bottle did not cool completely");
+
+    WeaponLoadout.Select(WeaponLoadout.Kind.Slipper);
+    var slipper = new PlayerAttack { trigger = new Collider2D() };
+    Invoke(typeof(PlayerAttack), "Awake", slipper);
+    int hits = Fx.Hits;
+    GameInput.Attack.Pressed = true;
+    for (int i = 0; i < 120; i++) Invoke(typeof(PlayerAttack), "Update", slipper);
+    Assert(Fx.Hits >= hits + 10 && !slipper.Overheated && slipper.Heat == 0,
+        "Slipper was heat-limited or stopped swinging");
+    GameInput.Attack.Pressed = false;
+    slipper.CancelAttack();
+    WeaponLoadout.Select(WeaponLoadout.Kind.SprayBottle);
 });
 
 Check("spray emits from the current held nozzle after visual positioning", () =>
@@ -323,6 +419,50 @@ Check("spray emits from the current held nozzle after visual positioning", () =>
     attack.CancelAttack();
     Assert(!attack.trigger.enabled, "Cancel left the tool active");
     GameInput.Attack.Pressed = false;
+});
+
+Check("weapon roles dispatch once per target and preserve the player's knockback origin", () =>
+{
+    GameSession.LoadScene(1);
+    var swing = new AttackTrigger();
+    var area = new Collider2D();
+    swing.gameObject.Components[typeof(Collider2D)] = area;
+    Invoke(typeof(AttackTrigger), "Awake", swing);
+    var owner = new PlayerAttack { trigger = area };
+    owner.transform.position = new Vector3(-4, 2, 0);
+    area.gameObject.Components[typeof(AttackTrigger)] = swing;
+    Invoke(typeof(PlayerAttack), "Awake", owner);
+    area.enabled = true;
+    var body = new Rigidbody2D();
+    var status = new RoachStatus();
+    body.gameObject.Components[typeof(RoachStatus)] = status;
+    var first = new Collider2D { attachedRigidbody = body };
+    var second = new Collider2D { attachedRigidbody = body };
+    first.gameObject.tag = second.gameObject.tag = "Enemy";
+    area.TestOverlaps = new[] { first, second };
+    WeaponLoadout.Select(WeaponLoadout.Kind.SprayBottle);
+    Invoke(typeof(AttackTrigger), "FixedUpdate", swing);
+    Invoke(typeof(AttackTrigger), "FixedUpdate", swing);
+    Assert(status.Hits == 1 && status.LastSpray && status.LastDamage == WeaponLoadout.Damage,
+        "Mist skipped status reactions or duplicated a multi-collider target");
+    Assert(status.LastSource.x == -4 && status.LastSource.y == 2,
+        "Knockback source came from the extended attack zone rather than the player");
+    Assert(body.gameObject.DamageCalls == 0, "Status target also took legacy damage");
+    area.enabled = false;
+    Invoke(typeof(AttackTrigger), "Update", swing);
+    area.enabled = true;
+    WeaponLoadout.Select(WeaponLoadout.Kind.Slipper);
+    Invoke(typeof(AttackTrigger), "FixedUpdate", swing);
+    Assert(status.Hits == 2 && !status.LastSpray && status.LastDamage == WeaponLoadout.Damage,
+        "Slipper did not dispatch its distinct reaction");
+
+    var legacy = new Collider2D();
+    legacy.gameObject.tag = "Enemy";
+    area.TestOverlaps = new[] { legacy };
+    Invoke(typeof(AttackTrigger), "FixedUpdate", swing);
+    Assert(legacy.gameObject.DamageCalls == 1 && legacy.gameObject.LastDamage == WeaponLoadout.Damage,
+        "Legacy bosses stopped receiving loadout damage");
+    WeaponLoadout.Select(WeaponLoadout.Kind.SprayBottle);
 });
 
 Check("every C# asset has a unique Unity metadata GUID", () =>

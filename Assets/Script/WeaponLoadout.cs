@@ -10,6 +10,7 @@ public static class WeaponLoadout
     public static string Name => IsSpray ? "Spray Bottle" : "Slipper";
     public static string Action => IsSpray ? "Spray" : "Slap";
     public static float Reach => IsSpray ? 3.6f : 1.65f;
+    public static int Damage => IsSpray ? 12 : 32;
     public static float Duration => IsSpray ? 0.6f : 0.48f;
     public static float Start => IsSpray ? 0.85f : 0.35f;
     public static float Height => IsSpray ? -0.2f : 0.05f;

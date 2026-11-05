@@ -10,11 +10,16 @@ public class GameHUD : MonoBehaviour
     static GameHUD instance;
 
     Player player;
+    PlayerAttack attack;
     GameMaster gm;
     Image[] hearts;
     TextMeshProUGUI coinText, livesText, bestText, toastText;
     TextMeshProUGUI questText, bossTitle;
     Image bossFill, bossFillBg;
+    Image heatFill;
+    TextMeshProUGUI toolHint;
+    int shownHeat = -1;
+    bool shownHot;
     RectTransform bossCard;
     int shownBossHp = -1;
     float toastTimer;
@@ -54,6 +59,7 @@ public class GameHUD : MonoBehaviour
     {
         instance = this;
         player = p;
+        attack = p.GetComponent<PlayerAttack>();
         gm = GameObject.FindGameObjectWithTag("gamemaster").GetComponent<GameMaster>();
         HideOldHud();
         MakeSprites();
@@ -91,8 +97,15 @@ public class GameHUD : MonoBehaviour
         titleText.rectTransform.anchoredPosition = Vector2.zero;
         // phải trên: điểm cao nhất
         bestText = MakeText("", 26, new Vector2(1, 1), new Vector2(-30, -30), TextAlignmentOptions.Right);
-        CuteTheme.Card(content, new Vector2(1, 1), new Vector2(-138, -126), new Vector2(252, 40));
+        CuteTheme.Card(content, new Vector2(1, 1), new Vector2(-138, -150), new Vector2(252, 88));
         MakeText(WeaponLoadout.Name, 20, new Vector2(1, 1), new Vector2(-30, -126), TextAlignmentOptions.Right);
+        Image heatTrack = MakeImage(circleSprite, new Vector2(1, 1), new Vector2(-246, -150), new Vector2(216, 9));
+        heatTrack.color = new Color(0.25f, 0.3f, 0.25f, 0.2f);
+        heatTrack.gameObject.SetActive(WeaponLoadout.IsSpray);
+        heatFill = MakeImage(circleSprite, new Vector2(1, 1), new Vector2(-246, -150), new Vector2(0, 9));
+        heatFill.gameObject.SetActive(WeaponLoadout.IsSpray);
+        toolHint = MakeText(WeaponLoadout.IsSpray ? "Slow mist | Heat 0%" : "Interrupt a charge to stun", 16,
+            new Vector2(1, 1), new Vector2(-30, -175), TextAlignmentOptions.Right);
         // dưới best: dòng nhiệm vụ
         questText = MakeText("", 22, new Vector2(1, 1), new Vector2(-30, -84), TextAlignmentOptions.Right);
         questText.color = new Color(0.4f, 0.34f, 0.16f);
@@ -202,6 +215,18 @@ public class GameHUD : MonoBehaviour
     void Update()
     {
         titleCard.anchoredPosition = new Vector2(0, ((RectTransform)content).rect.width < 1000 ? -185 : -39);
+        if (WeaponLoadout.IsSpray && attack != null)
+        {
+            int percent = Mathf.RoundToInt(attack.Heat * 100);
+            if (percent != shownHeat || shownHot != attack.Overheated)
+            {
+                shownHeat = percent;
+                shownHot = attack.Overheated;
+                heatFill.rectTransform.sizeDelta = new Vector2(216 * attack.Heat, 9);
+                heatFill.color = shownHot ? CuteTheme.Pink : Color.Lerp(CuteTheme.Mint, new Color(1, 0.65f, 0.2f), attack.Heat);
+                toolHint.text = (shownHot ? "Cooling... " : "Slow mist | Heat ") + percent + "%";
+            }
+        }
         if (lastHealth != player.ourHealth)
         {
             lastHealth = player.ourHealth;

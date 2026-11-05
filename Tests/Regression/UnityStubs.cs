@@ -12,6 +12,7 @@ namespace UnityEngine
     {
         public string tag;
         public int DamageCalls;
+        public int LastDamage;
         public readonly Dictionary<System.Type, object> Components = new();
         public Transform transform = new();
         public T GetComponent<T>() where T : class => Components.TryGetValue(typeof(T), out object c) ? c as T : null;
@@ -38,6 +39,7 @@ namespace UnityEngine
         public GameObject gameObject = new();
         public Rigidbody2D attachedRigidbody;
         public Transform transform => gameObject.transform;
+        public T GetComponent<T>() where T : class => gameObject.GetComponent<T>();
         public bool CompareTag(string tag) => gameObject.tag == tag;
         public int OverlapCollider(ContactFilter2D filter, Collider2D[] results)
         {
@@ -47,7 +49,9 @@ namespace UnityEngine
         }
         public void SendMessageUpwards(string method, int value)
         {
-            (attachedRigidbody?.gameObject ?? gameObject).DamageCalls++;
+            GameObject receiver = attachedRigidbody?.gameObject ?? gameObject;
+            receiver.DamageCalls++;
+            receiver.LastDamage = value;
         }
     }
     public class BoxCollider2D : Collider2D { public Vector2 offset, size; }
@@ -68,6 +72,7 @@ namespace UnityEngine
         public float x, y;
         public Vector2(float x, float y) { this.x = x; this.y = y; }
         public static Vector2 zero => new(0, 0);
+        public static implicit operator Vector2(Vector3 value) => new(value.x, value.y);
     }
     public static class Mathf
     {
@@ -93,7 +98,21 @@ namespace UnityEngine
 public class Player
 {
     public bool Alive = true;
+    public int ourHealth = 4;
     public bool CanAct => Alive && GameSession.IsPlaying;
+}
+public class RoachStatus
+{
+    public int Hits, LastDamage;
+    public bool LastSpray;
+    public UnityEngine.Vector2 LastSource;
+    public void ApplyWeaponHit(int damage, bool spray, UnityEngine.Vector2 source)
+    {
+        Hits++;
+        LastDamage = damage;
+        LastSpray = spray;
+        LastSource = source;
+    }
 }
 public class SoundManager { }
 public static class GameHUD

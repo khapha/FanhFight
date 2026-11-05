@@ -5,6 +5,7 @@ using UnityEngine;
 public class AttackTrigger : MonoBehaviour
 {
     public int dmg = 20;
+    [System.NonSerialized] public Transform Source;
     // mỗi nhát dép chỉ trúng mỗi địch MỘT lần, kể cả khi vùng chém được bật lên
     // trong lúc đã chồng sẵn lên địch (OnTriggerEnter không fire trong trường hợp đó)
     readonly HashSet<GameObject> hitThisSwing = new HashSet<GameObject>();
@@ -41,8 +42,12 @@ public class AttackTrigger : MonoBehaviour
             GameObject enemy = collision.attachedRigidbody != null
                 ? collision.attachedRigidbody.gameObject : collision.gameObject;
             if (!hitThisSwing.Add(enemy)) return;
-            collision.SendMessageUpwards("Damage", dmg);
-            Fx.HitStop();
+            RoachStatus status = enemy.GetComponent<RoachStatus>();
+            if (status != null) status.ApplyWeaponHit(WeaponLoadout.Damage, WeaponLoadout.IsSpray,
+                Source != null ? Source.position : transform.position);
+            else collision.SendMessageUpwards("Damage", WeaponLoadout.Damage);
+            // Mist keeps its continuous flow; the slipper has a short impact pause.
+            if (!WeaponLoadout.IsSpray) Fx.HitStop();
         }
     }
 

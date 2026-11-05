@@ -10,6 +10,7 @@ public static class WebBuild
     public static void Checked()
     {
         TestBuild.Quest();
+        CombatChecks.Run();
         Build();
     }
     public static void Build()
@@ -35,6 +36,10 @@ public static class WebBuild
         const string page = "WebBuild/index.html";
         string html = File.ReadAllText(page);
         if (html.Contains("id=\"responsive-game\"")) return;
+        // Unity's browser cache otherwise reuses the old WASM after a local rebuild.
+        string revision = System.DateTime.UtcNow.Ticks.ToString();
+        html = html.Replace(".unityweb\"", ".unityweb?v=" + revision + "\"")
+            .Replace(".loader.js\"", ".loader.js?v=" + revision + "\"");
         html = html.Replace("</head>", @"
     <meta name=""viewport"" content=""width=device-width, initial-scale=1, viewport-fit=cover"">
     <style id=""responsive-game"">

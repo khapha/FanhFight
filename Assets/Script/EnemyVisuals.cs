@@ -4,6 +4,7 @@ public class EnemyVisuals : MonoBehaviour
 {
     Enemy roach;
     TurretAI turret;
+    RoachStatus status;
     SpriteRenderer body, warning, health;
     float phase;
 
@@ -11,11 +12,13 @@ public class EnemyVisuals : MonoBehaviour
     {
         roach = GetComponent<Enemy>();
         turret = GetComponent<TurretAI>();
+        status = GetComponent<RoachStatus>();
         body = GetComponent<SpriteRenderer>();
         phase = transform.position.x;
         if (roach != null && roach.rb2d != null) roach.rb2d.interpolation = RigidbodyInterpolation2D.Interpolate;
         warning = Add("AttackWarning", CuteArt.Alert, new Vector3(0, 1, 0));
         warning.transform.localScale = Vector3.one * 0.7f;
+        warning.enabled = false;
         if (turret != null)
         {
             health = Add("TurretHealth", MiniArt.Circle, new Vector3(0, 0.7f, 0));
@@ -39,9 +42,13 @@ public class EnemyVisuals : MonoBehaviour
         if (body == null || warning == null) return;
         if (roach != null)
         {
-            body.sprite = CuteArt.Roach((int)(Time.time * (roach.fly ? 10 : 4) + phase) % 2);
-            warning.enabled = roach.fly && roach.player != null
-                && (roach.player.transform.position - transform.position).sqrMagnitude < 16;
+            float rate = status != null ? status.SpeedMultiplier : 1;
+            body.sprite = CuteArt.RoachVariant((int)(Time.time * (roach.fly ? 12 : 4) * rate + phase) % 2, 2, roach.fly);
+            body.color = status != null ? status.Tint : Color.white;
+            warning.enabled = status != null && (status.Telegraphing || status.Stunned)
+                && GameSession.IsPlaying && roach.player != null && roach.player.CanAct;
+            warning.sprite = status != null && status.Stunned ? CuteArt.Sparkle : CuteArt.Alert;
+            warning.color = new Color(1f, 0.7f + Mathf.Sin(Time.time * 25) * 0.2f, 0.35f);
         }
         else if (turret != null)
         {
